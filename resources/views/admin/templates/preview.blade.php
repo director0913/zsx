@@ -4,11 +4,11 @@
 <head>
     <meta charset="utf-8">
     <title>{{$info['title']}}</title>
-    <link type="text/css" rel="stylesheet" href="/vendors/css/wenjuan_ht.css">
-    <link type="text/css" rel="stylesheet" href="/vendors/css/icon.css">
-    <link type="text/css" rel="stylesheet" href="/vendors/css/easyui.css">
-    <link type="text/css" rel="stylesheet" href="/vendors/css/demo.css">
-  <script type="text/javascript" src="/vendors/jquery/jquery-2.1.1.js"></script>
+    <link type="text/css" rel="stylesheet" href="{{asset('/vendors/css/wenjuan_ht.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{asset('/vendors/css/icon.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{asset('/vendors/css/easyui.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{asset('/vendors/css/demo.css')}}">
+  <script type="text/javascript" src="{{asset('/vendors/jquery/jquery-2.1.1.js')}}"></script>
 </head>
 <style TYPE="text/css"> 
  #movie_box {
@@ -409,11 +409,11 @@
         </div>
     </div>
 </body>
-<script type="text/javascript" src="/vendors/jquery/jquery-1.7.1-wenjuan.js"></script>  
-<script type="text/javascript" src="/vendors/jquery/wenjuan_add.js"></script>
-<script type="text/javascript" src="/vendors/jquery/wenjuan.js"></script>
-<script type="text/javascript" src="/vendors/jquery/jquery.easyui.min.js"></script>
-<script type="text/javascript" src="/vendors/jquery/jquery.easyui.mobile.js"></script>
+<script type="text/javascript" src="{{asset('/vendors/jquery/jquery-1.7.1-wenjuan.js')}}"></script>  
+<script type="text/javascript" src="{{asset('/vendors/jquery/wenjuan_add.js')}}"></script>
+<script type="text/javascript" src="{{asset('/vendors/jquery/wenjuan.js')}}"></script>
+<script type="text/javascript" src="{{asset('/vendors/jquery/jquery.easyui.min.js')}}"></script>
+<script type="text/javascript" src="{{asset('/vendors/jquery/jquery.easyui.mobile.js')}}"></script>
 <script type="text/javascript">
     $(document).ready(function(e) {
         $("[name='base_img']").val($('.cont').html())
