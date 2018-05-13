@@ -16,7 +16,7 @@ trait ActionButtonAttributeTrait
 		if (config('admin.global.'.$this->action.'.show')) {
 			if (auth()->user()->can(config('admin.permissions.'.$this->action.'.show'))) {
 				if ($type) {
-					return '<a href="'.url('admin/'.$this->action.'/'.$this->id).'" class="btn btn-xs btn-outline btn-info tooltips" data-toggle="tooltip" data-original-title="' . trans('admin/action.actionButton.show') . '"  data-placement="top"><i class="fa fa-eye"></i></a> ';
+					return '<a href="'.url('admin/'.$this->action.'/'.$this->id).'" class="btn btn-xs btn-outline btn-info tooltips"  data-original-title="' . trans('admin/action.actionButton.show') . '"  data-placement="top"><i class="fa fa-eye"></i></a> ';
 				}
 				return '<a href="'.url('admin/'.$this->action.'/'.$this->id).'" class="btn btn-xs btn-info tooltips" data-toggle="modal" data-target="#myModal" data-original-title="' . trans('admin/action.actionButton.show') . '"  data-placement="top"><i class="fa fa-eye"></i></a> ';
 			}
@@ -75,7 +75,7 @@ trait ActionButtonAttributeTrait
 	{
 		//var_dump(config('admin.permissions.'.$this->action.'.downexcel'));die;	
 		if (auth()->user()->can(config('admin.permissions.'.$this->action.'.downexcel'))) {
-			return '<a href="'.url('admin/'.$this->action.'/'.$this->id.'/downexcel').'" class="btn btn-xs btn-outline btn-warning tooltips" data-original-title="' . trans('admin/action.actionButton.downexcel') . '"  data-placement="top"><i class="fa ">下载</i></a> ';
+			return '<a href="'.url('admin/'.$this->action.'/'.$this->id.'/downexcel').'" class="btn btn-xs btn-outline btn-warning tooltips" data-original-title="' . trans('admin/action.actionButton.downexcel') . '"  data-placement="top"><i class="fa ">下载Excel统计结果</i></a> ';
 		}
 		return '';
 	}	/**

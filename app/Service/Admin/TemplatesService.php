@@ -54,7 +54,7 @@ class TemplatesService extends BaseService
 			foreach ($result['roles'] as $k=>$v) {
 				$this->id = $v->id;
 				//$result['roles'][$k]['actionButton'] = $this->getActionButtonAttribute(false);
-				$result['roles'][$k]['action'] = $this->getActionButtonAttribute(false);
+				$result['roles'][$k]['action'] = $this->getActionButtonAttribute(true);
 			}
 		}
 	//	return $result;
@@ -360,29 +360,41 @@ class TemplatesService extends BaseService
 	 * @param  [type]                   $id [description]
 	 * @return [type]                       [description]
 	 */
-	public function downexcel(Request $request)
+	public function downexcel($id)
 	{
+
 		$where['templates_id'] = $id;
-        $answer = $this->templates_answer->findAnswerOne($where);
-        $where['id'] = $id;
-        $question = $this->templates->findOne($where);
-        if ($answer->count()) {
-        	
+        $answer = $this->Templates_answer->findAll($where);
+        $where_template['id'] = $id;
+        $question = $this->templates->findOne($where_template);
+        $new_answer = [];
+        $callData = [];
+        if ($question->count()) {
+        	$question = $question->toArray();
+        	$question['content_text'] = json_decode($question['content_text'],true);
+        	if ($question['content_text']) {
+        		foreach ($question['content_text'] as $k => $v) {
+        			$new_question[$k] = $v['biaoti_title'];
+        		}
+        		$callData[] = $new_question;
+        	}
         }
-         ob_end_clean();
-         $cellData = [
-             ['学号','姓名','成绩'],
-            ['10001','AAAAA','99'],
-            ['10002','BBBBB','92'],
-            ['10003','CCCCC','95'],
-            ['10004','DDDDD','89'],
-            ['10005','EEEEE','96'],
-        ];
-        Excel::create('学生成绩',function($excel) use ($cellData){
-            $excel->sheet('score', function($sheet) use ($cellData){
-                $sheet->rows($cellData);
+        
+        if ($answer->count()) {
+        	$answer = $answer->toArray();
+        	if ($answer) {
+        		//去除多余许答案
+        		foreach ($answer as $k => $v) {
+        			$callData[] = array_slice($v,2,count($new_question));
+        		}
+        	}
+        }
+
+        ob_end_clean();
+        Excel::create($question['title'],function($excel) use ($callData){
+            $excel->sheet('score', function($sheet) use ($callData){
+                $sheet->rows($callData);
             });
         })->export('xls');
-		return $responseData;
 	}
 }

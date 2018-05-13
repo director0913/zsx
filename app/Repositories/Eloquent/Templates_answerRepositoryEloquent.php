@@ -53,6 +53,17 @@ class Templates_answerRepositoryEloquent extends BaseRepository
     {
         return $this->model->where($formData)->first();
     }
+    /**
+     * 查询所有
+     * @author 王浩
+     * @date   2018-05-08
+     * @param  [type]                   $formData  [条件数组]
+     * @return [type]                   [查询结果集，包含查询的数量及查询的结果对象]
+     */
+    public function findAll($formData)
+    {
+        return $this->model->where($formData)->get();
+    }
         /**
      * 插入
      * @author 王浩

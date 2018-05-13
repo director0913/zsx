@@ -158,33 +158,13 @@ class FormController extends Controller
     }
 
     /**
-     * 重置用户密码
+     * 下载excel
      * @author 王浩
      * @date   2018-04-29
      * @param  [type]                   $id [description]
-     * @return [type]                       [description]
      */
-    public function downexcel(Request $request,$id)
+    public function downexcel($id)
     {
-        $where['templates_id'] = $id;
-        $answer = $this->templates_answer->findAnswerOne($where);
-        $where['templates_id'] = $id;
-        $answer = $this->templates->downexcel($where);
-        var_dump($res->toArray());die;
-        // return response()->json($responseData);
-        // ob_end_clean();
-        //  $cellData = [
-        //      ['学号','姓名','成绩'],
-        //     ['10001','AAAAA','99'],
-        //     ['10002','BBBBB','92'],
-        //     ['10003','CCCCC','95'],
-        //     ['10004','DDDDD','89'],
-        //     ['10005','EEEEE','96'],
-        // ];
-        // Excel::create('学生成绩',function($excel) use ($cellData){
-        //     $excel->sheet('score', function($sheet) use ($cellData){
-        //         $sheet->rows($cellData);
-        //     });
-        // })->export('xls');
+        $this->templates->downexcel($id);
     }
 }

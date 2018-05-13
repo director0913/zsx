@@ -1,0 +1,21 @@
+{
+    "name": "geniusts/roles",
+    "description": "Powerful package for handling roles and permissions in Laravel 5.3",
+    "keywords": ["roles", "permissions", "acl", "auth", "laravel", "illuminate"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "AbdulKader Zein Eddin",
+            "email": "aboudeh1987@gmail.com"
+        }
+    ],
+    "require": {
+        "php": ">=5.5.9",
+        "illuminate/support": "~5.3"
+    },
+    "autoload": {
+        "psr-4": {
+            "GeniusTS\\Roles\\": "src/"
+        }
+    }
+}
