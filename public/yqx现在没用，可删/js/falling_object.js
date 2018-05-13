@@ -1,0 +1,8 @@
+/**
+ * eqShow - v2.0.5.1 - 2016-01-22
+ * 
+ *
+ * Copyright (c) 2016 
+ * Licensed MIT <>
+ */
+!function(){window.fallingObject=function(a,b){function c(){h.pause?clearInterval(h.interVal):(d(p),e())}function d(a){a.clearRect(0,0,m,n);for(var b=0;b<q.length;b++)a.save(),a.translate(q[b].x,q[b].y),a.scale(q[b].scale,q[b].scale),a.rotate(q[b].rotate),a.fillRect(0,0,r,r),a.restore()}function e(){Math.random()<.02*j.density&&g(),f()}function f(){for(var a=0;a<q.length;a++)q[a].x+=q[a].vx,q[a].y+=q[a].vy,q[a].vy+=q[a].g;for(var b=0,a=0;a<q.length;a++)q[a].y<n-r&&q[a].x>-r&&q[a].x<m&&(q[b++]=q[a]);for(;q.length>b;)q.pop();q.length>s&&(q.length=s)}function g(){var a=.5*Math.random()+.3,b={x:Math.ceil(Math.random()*m),y:-r,g:.02*a*j.src.vy,vx:.05*Math.pow(-1,Math.ceil(1e3*Math.random())),vy:.01*a*j.src.vy,color:"yellow",scale:a,rotate:Math.pow(-1,Math.ceil(1e3*Math.random()))*Math.random()*(j.src.rotate||0)*Math.PI/180};q.push(b)}var h={pause:!1,startPlay:function(){this.pause=!1,h.interVal=setInterval(c,20)}},i=a[b-1];if(i.properties){var j=i.properties.fallingObject||{};renderPage(eqShow,b,a);for(var k=0;k<a[b-1].elements.length;k++){var l=eqShow.selectElement(a[b-1].elements[k].id);eqxCommon.bindTrigger(l,a[b-1].elements[k])}var m=$(".m-img").width(),n=$(".m-img").height(),o=document.createElement("canvas");o.width=m,o.height=n,$(o).prependTo("#page"+b+" .edit_wrapper").attr("class","cas page_effect").attr("id","can"+b).attr("style","z-index: 0!important");var p=o.getContext("2d"),q=[],r=60,s=20,t=new Image;return t.src=j.src.path,t.onload=function(){p.beginPath(),pattern=p.createPattern(t,"repeat"),p.fillStyle=pattern,p.closePath(),1==b&&(h.interVal=setInterval(c,20))},h}}}();

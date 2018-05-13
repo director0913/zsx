@@ -1,0 +1,70 @@
+/*2015-7-1  旺 806788023yrf */
+iframe[Attributes Style] {
+width: 100%;
+border-top-width: 0px;
+border-right-width: 0px;
+border-bottom-width: 0px;
+border-left-width: 0px;
+}
+user agent stylesheetiframe:not([seamless]) {
+border: 2px inset;
+border-image-source: initial;
+border-image-slice: initial;
+border-image-width: initial;
+border-image-outset: initial;
+border-image-repeat: initial;
+}
+.m-img .map_mask {
+position: absolute;
+top: 0;
+left: 0;
+background-color: rgba(0,0,0,.5);
+z-index: 1000;
+width: 100%;
+height: 100%;
+}
+  .map_area .after {
+-webkit-border-radius: 50%;
+border-radius: 50%;
+height: 20px;
+width: 40px;
+position: absolute;
+left: 50%;
+top: 67%;
+margin-left: -20px;
+margin-top: -10px;
+-webkit-animation: pulsate 1s ease-out;
+-moz-animation: pulsate 1s ease-out;
+-o-animation: pulsate 1s ease-out;
+-ms-animation: pulsate 1s ease-out;
+animation: pulsate 1s ease-out;
+-webkit-animation-iteration-count: infinite;
+-moz-animation-iteration-count: infinite;
+-o-animation-iteration-count: infinite;
+-ms-animation-iteration-count: infinite;
+animation-iteration-count: infinite;
+opacity: 0;
+-ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+filter: alpha(opacity=0);
+-webkit-box-shadow: 0 0 1px 2px #89849b;
+box-shadow: 0 0 1px 2px #89849b;
+-webkit-animation-delay: 1.1s;
+-moz-animation-delay: 1.1s;
+-o-animation-delay: 1.1s;
+-ms-animation-delay: 1.1s;
+animation-delay: 1.1s;
+}
+.nr .edit_area>li * {
+box-sizing: border-box;
+-moz-box-sizing: border-box;
+}
+.nr .element-box .map_area {
+background-image: url(/assets/images/map.png);
+width: 48px;
+height: 48px;
+}
+.nr .element-box .lottery_area, .nr .element-box .map_area {
+display: block;
+background-repeat: no-repeat;
+background-size: 100% 100%;
+}
