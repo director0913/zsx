@@ -139,44 +139,6 @@ class FormService extends BaseService
 		abort(404);
 	}
 	/**
-	 * 修改用户
-	 * @author 王浩
-	 * @date  2018-04-29
-	 * @param  [type]                   $attributes [表单数据]
-	 * @param  [type]                   $id         [resource路由传递过来的id]
-	 * @return [type]                               [Boolean]
-	 */
-	public function updateUser($attributes,$id)
-	{
-		// 防止用户恶意修改表单id，如果id不一致直接跳转500
-		if ($attributes['id'] != $id) {
-			abort(500,trans('admin/errors.user_error'));
-		}
-		try {
-			$result = $this->user->update($attributes,$id);
-			if ($result) {
-				// 更新用户角色关系
-				if (isset($attributes['role'])) {
-					$result->roles()->sync($attributes['role']);
-				}else{
-					$result->roles()->sync([]);
-				}
-				// 更新用户权限关系
-				if (isset($attributes['permission'])) {
-					$result->userPermissions()->sync($attributes['permission']);
-				}else{
-					$result->userPermissions()->sync([]);
-				}
-			}
-			flash_info($result,trans('admin/alert.user.edit_success'),trans('admin/alert.user.edit_error'));
-			return $result;
-		} catch (Exception $e) {
-			// 错误信息发送邮件
-			$this->sendSystemErrorMail(env('MAIL_SYSTEMERROR',''),$e);
-			return false;
-		}
-	}
-	/**
 	 * 用户暂不做状态管理，直接删除
 	 * @author 王浩
 	 * @date  2018-04-29

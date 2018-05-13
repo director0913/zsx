@@ -3,6 +3,7 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Service\Admin\TemplatesService;
+use App\Service\Admin\Templates_settingsService;
 use App\Service\Admin\Templates_question_typeService;
 use App\Http\Requests\TemplatesRequest;
 use Storage;
@@ -10,12 +11,13 @@ class TemplatesController extends Controller
 {
     private $templates,$templates_question_type;
 
-    function __construct(TemplatesService $templates,Templates_question_typeService $templates_question_type)
+    function __construct(TemplatesService $templates,Templates_question_typeService $templates_question_type,Templates_settingsService $templates_settings)
     {
         // 自定义权限中间件
         $this->middleware('check.permission:user');
         $this->templates = $templates;
         $this->templates_question_type = $templates_question_type;
+        $this->templates_settings = $templates_settings;
     }
 
     /**
@@ -120,15 +122,22 @@ class TemplatesController extends Controller
     }
 
     /**
-     * 重置用户密码
+     * 模版配置
      * @author 王浩
      * @date   2018-04-29
      * @param  [type]                   $id [description]
      * @return [type]                       [description]
      */
-    public function resetPassword($id)
+    public function settings(request $request)
     {
-        $responseData = $this->user->resetUserPassword($id);
-        return response()->json($responseData);
+        if($request->isMethod('post')){
+            $parmData = $request->all();
+            $this->templates_settings->editSettings($parmData);
+        }
+        $responseData = $this->templates_settings->findSettingsOne(['id'=>1]);
+        if ($responseData) {
+            $responseData = $responseData->toArray();
+        }
+        return view('admin.templates.settings')->with(compact('responseData'));
     }
 }

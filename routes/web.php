@@ -41,17 +41,6 @@ Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware' => ['auth'
 
 });
 
-// 后台系统日志
-Route::group(['prefix' => 'admin/log','middleware' => ['auth','check.permission:log']],function ($router)
-{
-	$router->get('/','\Arcanedev\LogViewer\Http\Controllers\LogViewerController@index')->name('log.dash');
-	$router->get('list','\Arcanedev\LogViewer\Http\Controllers\LogViewerController@listLogs')->name('log.index');
-	$router->post('delete','\Arcanedev\LogViewer\Http\Controllers\LogViewerController@delete')->name('log.destroy');
-	$router->get('/{date}','\Arcanedev\LogViewer\Http\Controllers\LogViewerController@show')->name('log.show');
-	$router->get('/{date}/download','\Arcanedev\LogViewer\Http\Controllers\LogViewerController@download')->name('log.download');
-	$router->get('/{date}/{level}','\Arcanedev\LogViewer\Http\Controllers\LogViewerController@showByLevel')->name('log.filter');
-
-});
 //预览
 Route::get('form/custom/{id}', 'FormController@custom');
 Route::post('form/answer/', 'FormController@answer');
