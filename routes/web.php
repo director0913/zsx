@@ -54,3 +54,4 @@ Route::group(['prefix' => 'admin/log','middleware' => ['auth','check.permission:
 });
 //预览
 Route::get('form/custom/{id}', 'FormController@custom');
+Route::post('form/answer/', 'FormController@answer');

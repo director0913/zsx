@@ -13,6 +13,7 @@
 <body>
     <form enctype="multipart/form-data" action="{{url('/form/answer')}}" method="post">
     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+    <input type="hidden" name="templates_id" value="<?php echo $info['id']; ?>">
     <p>{{$info['title']}}</p> 
     <p>{!! $info['desc'] !!}</p>    
     </div>

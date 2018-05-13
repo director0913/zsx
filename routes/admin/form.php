@@ -9,6 +9,6 @@ $router->group(['prefix' => 'form'],function ($router)
 	$router->get('create/','FormController@create')->name('form.create');
 	$router->get('/lists/{id?}','FormController@lists')->name('form.lists');
 	$router->get('/show/{id}','FormController@show')->name('form.show');
-	$router->any('{id}/downexcel','FormController@downexcel/{id}')->name('form.downexcel/{id}');
+	$router->any('/downexcel/{id}','FormController@downexcel')->name('form.downexcel/{id}');
 });
 $router->resource('form','FormController');

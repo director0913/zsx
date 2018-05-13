@@ -29,7 +29,7 @@
     </div>
     <form enctype="multipart/form-data" action="{{url('/admin/templates/store')}}" method="post">
     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-    <input type="hidden" name="typeid" value="1">
+    <input type="hidden" name="typeid" value="<?php echo $typeid; ?>">
     <div class="but" style="padding-top: 20px">
         <select id="" class="addquerstions" name="templates_type_id">
           <option value="-1">选择分类</option>

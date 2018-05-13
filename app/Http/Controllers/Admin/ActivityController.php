@@ -53,9 +53,10 @@ class ActivityController extends Controller
      */
     public function create()
     {
+        $typeid = 2;
         $templates_typeLists = $this->templates_typeService->findTypeAll();
         $typeInfo = $this->templates_question_type->findTypeAll();
-        return view('admin.activity.create')->with(compact('typeInfo'))->with(compact('templates_typeLists'));
+        return view('admin.activity.create')->with(compact('typeInfo'))->with(compact('templates_typeLists'))->with(compact('typeid'));
     }
 
     /**

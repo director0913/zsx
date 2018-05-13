@@ -3,12 +3,14 @@ namespace App\Service\Admin;
 use App\Repositories\Eloquent\TemplatesRepositoryEloquent;
 use App\Repositories\Eloquent\Templates_answerRepositoryEloquent;
 use App\Service\Admin\Templates_question_typeService;
+use App\Service\Admin\Templates_answerService;
 use App\Service\Admin\BaseService;
 use App\Models\Templates;
 use Illuminate\Http\Request;
 use App\Traits\ActionButtonAttributeTrait;
 use Storage;
 use Exception;
+use Excel;
 /**
 * 角色service
 */
@@ -104,7 +106,7 @@ class TemplatesService extends BaseService
 	{
 
 		$formData = $request->all();
-		$parm = [];
+		$parm['templates_id'] = isset($formData['templates_id']) && $formData['templates_id']?$formData['templates_id']:'';
 //		var_dump($formData);die;
 		if ($formData['node'] && is_array($formData['node'])) {
 			foreach ($formData['node'] as $k => $v) {
@@ -358,17 +360,29 @@ class TemplatesService extends BaseService
 	 * @param  [type]                   $id [description]
 	 * @return [type]                       [description]
 	 */
-	public function resetUserPassword($id)
+	public function downexcel(Request $request)
 	{
-		$responseData = [
-			'status'=> false,
-			'msg' 	=> trans('admin/alert.user.reset_error'),
-		];
-		$result = $this->user->update(['password' => config('admin.global.reset')],$id);
-		if ($result) {
-			$responseData['status'] = true;
-			$responseData['msg'] 	= trans('admin/alert.user.reset_success');
-		}
+		$where['templates_id'] = $id;
+        $answer = $this->templates_answer->findAnswerOne($where);
+        $where['id'] = $id;
+        $question = $this->templates->findOne($where);
+        if ($answer->count()) {
+        	
+        }
+         ob_end_clean();
+         $cellData = [
+             ['学号','姓名','成绩'],
+            ['10001','AAAAA','99'],
+            ['10002','BBBBB','92'],
+            ['10003','CCCCC','95'],
+            ['10004','DDDDD','89'],
+            ['10005','EEEEE','96'],
+        ];
+        Excel::create('学生成绩',function($excel) use ($cellData){
+            $excel->sheet('score', function($sheet) use ($cellData){
+                $sheet->rows($cellData);
+            });
+        })->export('xls');
 		return $responseData;
 	}
 }

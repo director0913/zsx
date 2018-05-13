@@ -3,21 +3,24 @@ namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Service\Admin\TemplatesService;
+use App\Service\Admin\Templates_answerService;
 use App\Service\Admin\Form_question_typeService;
 use App\Service\Admin\Templates_question_typeService;
 use App\Service\Admin\Templates_typeService;
 use App\Http\Requests\FormRequest;
+
 class FormController extends Controller
 {
     private $form;
 
-    function __construct(TemplatesService $templates,Templates_question_typeService  $templates_question_type,Templates_typeService $templates_typeService)
+    function __construct(TemplatesService $templates,Templates_question_typeService  $templates_question_type,Templates_typeService $templates_typeService,Templates_answerService $templates_answer)
     {
         // 自定义权限中间件
         $this->middleware('check.permission:user');
         $this->templates = $templates;
         $this->templates_typeService = $templates_typeService;
         $this->templates_question_type = $templates_question_type;
+        $this->templates_answer = $templates_answer;
     }
 
     /**
@@ -55,7 +58,8 @@ class FormController extends Controller
     {
         $templates_typeLists = $this->templates_typeService->findTypeAll();
         $typeInfo = $this->templates_question_type->findTypeAll();
-        return view('admin.templates.create')->with(compact('typeInfo'))->with(compact('templates_typeLists'));
+        $typeid = 1;
+        return view('admin.templates.create')->with(compact('typeInfo'))->with(compact('templates_typeLists'))->with(compact('typeid'));
     }
 
     /**
@@ -160,9 +164,27 @@ class FormController extends Controller
      * @param  [type]                   $id [description]
      * @return [type]                       [description]
      */
-    public function resetPassword($id)
+    public function downexcel(Request $request,$id)
     {
-        $responseData = $this->user->resetUserPassword($id);
-        return response()->json($responseData);
+        $where['templates_id'] = $id;
+        $answer = $this->templates_answer->findAnswerOne($where);
+        $where['templates_id'] = $id;
+        $answer = $this->templates->downexcel($where);
+        var_dump($res->toArray());die;
+        // return response()->json($responseData);
+        // ob_end_clean();
+        //  $cellData = [
+        //      ['学号','姓名','成绩'],
+        //     ['10001','AAAAA','99'],
+        //     ['10002','BBBBB','92'],
+        //     ['10003','CCCCC','95'],
+        //     ['10004','DDDDD','89'],
+        //     ['10005','EEEEE','96'],
+        // ];
+        // Excel::create('学生成绩',function($excel) use ($cellData){
+        //     $excel->sheet('score', function($sheet) use ($cellData){
+        //         $sheet->rows($cellData);
+        //     });
+        // })->export('xls');
     }
 }
