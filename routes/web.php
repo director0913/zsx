@@ -38,6 +38,8 @@ Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware' => ['auth'
 	require(__DIR__ . '/admin/form.php');
 	//微活动
 	require(__DIR__ . '/admin/activity.php');
+	//背景音乐
+	require(__DIR__ . '/admin/music.php');
 
 });
 

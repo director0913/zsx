@@ -46,7 +46,8 @@ class Templates_settingsService extends BaseService
         $parm['available_start_at'] = isset($formData['available_start_at']) && $formData['available_start_at']?$formData['available_start_at']:'';
         $parm['available_end_at'] = isset($formData['available_end_at']) && $formData['available_end_at']? $formData['available_end_at']:'';
         $parm['available_price_max'] = isset($formData['available_price_max']) && intval($formData['available_price_max'])? intval($formData['available_price_max']):'';
-        $where['user_id'] = 1;
+        $where['user_id'] = getUerId();
+      //  var_dump($where);die;
         return $this->model->where($where)->update($parm);
     }
      /**
@@ -60,6 +61,6 @@ class Templates_settingsService extends BaseService
     public function findSettingsOne($formData=[])
     {
         
-        return $this->model->where($parm)->first();
+        return $this->model->where($formData)->first();
     }
 }

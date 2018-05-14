@@ -7,12 +7,14 @@
     <link type="text/css" rel="stylesheet" href="{{asset('vendors/css/wenjuan_ht.css')}}">
     <link type="text/css" rel="stylesheet" href="{{asset('vendors/css/icon.css')}}">
     <link type="text/css" rel="stylesheet" href="{{asset('vendors/css/easyui.css')}}">
+    <link type="text/css" rel="stylesheet" href="{{asset('vendors/css/video.css')}}">
     <link type="text/css" rel="stylesheet" href="{{asset('vendors/css/demo.css')}}">
     <script type="text/javascript" charset="utf-8" src="{{asset('vendors/ueditor/ueditor.config.js')}}"></script>
     <script type="text/javascript" charset="utf-8" src="{{asset('vendors/ueditor/ueditor.all.min.js')}}"> </script>
     <!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
     <!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
     <script type="text/javascript" charset="utf-8" src="{{asset('vendors/ueditor/lang/zh-cn/zh-cn.js')}}"></script>
+    <script type="text/javascript" charset="utf-8" src="{{asset('vendors/jquery/video.js')}}"></script>
 </head>
 <style TYPE="text/css"> 
  #movie_box {
@@ -24,9 +26,9 @@
 }
 </style> 
 <body>
-    <div id="date" style="display:none">
-        <input type="text" name="date" size="20" value＝""  class="easyui-datebox"/>
-    </div>
+<div id="textaudio1" style="margin-top: 60px"></div>
+    <span id="cutMusic" onclick="cutM()">切歌</span>
+
     <form enctype="multipart/form-data" action="{{url('/admin/templates/store')}}" method="post">
     <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
     <input type="hidden" name="typeid" value="<?php echo $typeid; ?>">
@@ -202,6 +204,26 @@
         UE.getEditor('editor').setHide()
         $('#finish').css('display','none')
         $('#cancle').css('display','none')
+    }
+
+</script>
+<script>
+    var wxAudio = new Wxaudio({
+        ele: '#textaudio1',
+        title: 'Jar Of Love',
+        disc: 'Break Me Up',
+        src: 'http://jq22.qiniudn.com/ocean_drive_01.mp3',
+        width: '320px'
+    });
+    function play() {
+        wxAudio.audioPlay()
+    }
+
+    function cutM () {
+        var src = 'http://jq22com.qiniudn.com/jq22m1.mp3'
+        var title = 'ocean'
+        var disc = 'ocean111'
+        wxAudio.audioCut(src, title, disc)
     }
 </script>
 </html>

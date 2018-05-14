@@ -134,10 +134,10 @@ class TemplatesController extends Controller
             $parmData = $request->all();
             $this->templates_settings->editSettings($parmData);
         }
-        $responseData = $this->templates_settings->findSettingsOne(['id'=>1]);
-        if ($responseData) {
-            $responseData = $responseData->toArray();
+        $info = $this->templates_settings->findSettingsOne(['id'=>getUerId()]);
+        if ($info) {
+            $info = $info->toArray();
         }
-        return view('admin.templates.settings')->with(compact('responseData'));
+        return view('admin.templates.settings')->with(compact('info'));
     }
 }

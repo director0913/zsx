@@ -6,8 +6,6 @@
 @inject('userPresenter','App\Presenters\Admin\UserPresenter')
 <link type="text/css" rel="stylesheet" href="{{asset('/vendors/css/easyui.css')}}">
 <script type="text/javascript" src="{{asset('/vendors/jquery/jquery-2.1.1.js')}}"></script>
-<script type="text/javascript" src="{{asset('/vendors/jquery/jquery.easyui.min.js')}}"></script>
- <script type="text/javascript" charset="utf-8" src="{{asset('vendors/jquery/easyui-lang-zh_CN.js')}}"></script>
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-lg-10">
     <h2>{!!trans('admin/user.title')!!}</h2>
@@ -40,34 +38,34 @@
           </div>
         </div>
         <div class="ibox-content">
-          <form method="post" action="{{url('admin/templates/settings')}}" class="form-horizontal">
+          <form method="post" action="{{url('admin/music/store')}}" class="form-horizontal" enctype="multipart/form-data">
             {{csrf_field()}}
-            <div class="form-group{{ $errors->has('available_start_at') ? ' has-error' : '' }}">
-              <label class="col-sm-2 control-label">可用开始时间</label>
+            <div class="form-group{{ $errors->has('name') ? ' has-error' : '' }}">
+              <label class="col-sm-2 control-label">音乐名称</label>
               <div class="col-sm-10">
-                <input type="text" class="easyui-datetimebox form-control" name="available_start_at" value="{{old('available_start_at')?old('available_start_at'):$info['available_start_at']}}" placeholder="{{trans('admin/user.model.available_start_at')}}"  > 
-                @if ($errors->has('available_start_at'))
-                <span class="help-block m-b-none text-danger">{{ $errors->first('available_start_at') }}</span>
+                <input type="text" class="form-control" name="name" value="{{old('name')}}" placeholder="音乐名称"  > 
+                @if ($errors->has('name'))
+                <span class="help-block m-b-none text-danger">{{ $errors->first('name') }}</span>
                 @endif
               </div>
             </div>
             <div class="hr-line-dashed"></div>
-            <div class="form-group{{ $errors->has('available_end_at') ? ' has-error' : '' }}">
-              <label class="col-sm-2 control-label">可用结束时间</label>
+            <div class="form-group{{ $errors->has('desc') ? ' has-error' : '' }}">
+              <label class="col-sm-2 control-label">描述</label>
               <div class="col-sm-10">
-                <input type="text" class="easyui-datetimebox form-control" name="available_end_at" value="{{old('available_end_at')?old('available_end_at'):$info['available_end_at']}}" placeholder="{{trans('admin/user.model.available_end_at')}}" > 
-                @if ($errors->has('available_end_at'))
-                <span class="help-block m-b-none text-danger">{{ $errors->first('available_end_at') }}</span>
+                <input type="text" class="form-control" name="desc" value="{{old('desc')}}" placeholder="描述" > 
+                @if ($errors->has('desc'))
+                <span class="help-block m-b-none text-danger">{{ $errors->first('desc') }}</span>
                 @endif
               </div>
             </div>
             <div class="hr-line-dashed"></div>
             <div class="form-group{{ $errors->has('available_price_max') ? ' has-error' : '' }}">
-              <label class="col-sm-2 control-label">到达多少钱之后可用</label>
+              <label class="col-sm-2 control-label">上传音乐文件</label>
               <div class="col-sm-10">
-                <input type="available_price_max" class="form-control" name="available_price_max" value="{{old('available_price_max')?old('available_price_max'):$info['available_price_max']}}" > 
-                @if ($errors->has('available_price_max'))
-                <span class="help-block m-b-none text-danger">{{ $errors->first('available_price_max') }}</span>
+                <input type="file" class="form-control" name="src" value="{{old('src')}}" > 
+                @if ($errors->has('src'))
+                <span class="help-block m-b-none text-danger">{{ $errors->first('src') }}</span>
                 @endif
               </div>
             </div>

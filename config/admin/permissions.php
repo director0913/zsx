@@ -53,6 +53,13 @@ return [
 		'filter' 	=> 'activity.filter',
 		'downexcel' 	=> 'activity.downexcel',
 	],
+	'music' => [
+		'list' 		=> 'music.list',
+		'destroy' 	=> 'music.destroy',
+		'show' 		=> 'music.show',
+		'edit' 	=> 'music.edit',
+		'create' 	=> 'music.create',
+	],
 
 	'system' => [
 		'list' => 'system.index'

@@ -16,6 +16,6 @@ if(!function_exists('getUser')){
 if(!function_exists('getUerId')){
 	function getUerId()
 	{
-		return $this->getUser()->id;
+		return getUser()->id;
 	}
 }

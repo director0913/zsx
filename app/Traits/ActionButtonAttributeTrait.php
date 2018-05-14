@@ -12,7 +12,8 @@ trait ActionButtonAttributeTrait
 	public function getShowActionButton($type = true)
 	{
 		//开启查看按钮
-		///var_dump(auth()->user()->can(config('admin.permissions.'.$this->action.'.show')));die;
+		//var_dump($this->action);
+		//var_dump(config('admin.permissions.'.$this->action.'.show'));die;
 		if (config('admin.global.'.$this->action.'.show')) {
 			if (auth()->user()->can(config('admin.permissions.'.$this->action.'.show'))) {
 				if ($type) {

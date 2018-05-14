@@ -1,8 +1,8 @@
 <?php
 namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
-class Form extends Model
+class Music extends Model
 {
-    protected $table = 'form';
+    protected $table = 'music';
 
 }
