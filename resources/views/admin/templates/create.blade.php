@@ -7,14 +7,12 @@
     <link type="text/css" rel="stylesheet" href="{{asset('vendors/css/wenjuan_ht.css')}}">
     <link type="text/css" rel="stylesheet" href="{{asset('vendors/css/icon.css')}}">
     <link type="text/css" rel="stylesheet" href="{{asset('vendors/css/easyui.css')}}">
-    <link type="text/css" rel="stylesheet" href="{{asset('vendors/css/video.css')}}">
     <link type="text/css" rel="stylesheet" href="{{asset('vendors/css/demo.css')}}">
     <script type="text/javascript" charset="utf-8" src="{{asset('vendors/ueditor/ueditor.config.js')}}"></script>
     <script type="text/javascript" charset="utf-8" src="{{asset('vendors/ueditor/ueditor.all.min.js')}}"> </script>
     <!--建议手动加在语言，避免在ie下有时因为加载语言失败导致编辑器加载失败-->
     <!--这里加载的语言文件会覆盖你在配置项目里添加的语言类型，比如你在配置项目里配置的是英文，这里加载的中文，那最后就是中文-->
     <script type="text/javascript" charset="utf-8" src="{{asset('vendors/ueditor/lang/zh-cn/zh-cn.js')}}"></script>
-    <script type="text/javascript" charset="utf-8" src="{{asset('vendors/jquery/video.js')}}"></script>
 </head>
 <style TYPE="text/css"> 
  #movie_box {
@@ -26,52 +24,68 @@
 }
 </style> 
 <body>
-<div id="textaudio1" style="margin-top: 60px"></div>
-    <span id="cutMusic" onclick="cutM()">切歌</span>
-
+    <div id="date" style="display:none">
+        <input type="text" name="date" size="20" value＝""  class="easyui-datebox"/>
+    </div>
     <form enctype="multipart/form-data" action="{{url('/admin/templates/store')}}" method="post">
-    <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-    <input type="hidden" name="typeid" value="<?php echo $typeid; ?>">
-    <div class="but" style="padding-top: 20px">
-        <select id="" class="addquerstions" name="templates_type_id">
-          <option value="-1">选择分类</option>
-            @if($templates_typeLists)
-                @foreach($templates_typeLists as $k => $v)
-                    <option value="{{$v['id']}}">{{$v['name']}}</option>
-                @endforeach
-            @endif
-        </select>
-    </div>
-    <span>标题：</span><input type="text" name="title">
-    <span>描述：</span><input type="text" name="desc">
-    <script id="editor" type="text/plain"  name="base_img" style="width:500px;height:300px;"></script>
-    <span onclick="wancheng()" id="finish" style="display:none">完成编辑</span>
-    <span onclick="cancle()" id="cancle" style="display:none">取消编辑</span>
-    <span onclick="bianji()">编辑背景</span>
-    <!-- <span>背景图片：</span> -->
-   <!--  <div class="upload">
-        <input type="button" class="btn" onclick="browerfile.click()" value="上传">
-        <input type="file" id="browerfile" style="display: none;" class="test" name="desc">
-        <div class="img_center">
-            <img src="" class="img1-img">
+        <div class="right">
+            <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
+            <input type="hidden" name="typeid" value="<?php echo $typeid; ?>">
+            <h3>选择分类</h3>
+            <div class="but but-nav" style="padding-top: 0px">
+                @if($templates_typeLists)
+                    @foreach($templates_typeLists as $k => $v)
+                        <a href='javascript:void(0)' value="{{$v['id']}}">{{$v['name']}}</a>
+                    @endforeach
+                @endif
+                <input type="hidden" name="templates_type_id" class='templates_type_id' value='-1'>
+                <!-- <select id="" class="addquerstions" name="templates_type_id">
+                        <option value="-1">选择分类</option>
+                        @if($templates_typeLists)
+                            @foreach($templates_typeLists as $k => $v)
+                                <option value="{{$v['id']}}">{{$v['name']}}</option>
+                            @endforeach
+                        @endif
+                    </select> -->
+            </div>
+            <h3 class='b-t'><span>标题：</span><input type="text" name="title"></h3>
+            <h3 class='b-t'><span>描述：</span><input type="text" name="desc"></h3>
+            <script id="editor" type="text/plain"  name="base_img" style="margin-top:20px;width:700px;height:300px;"></script>
+            <h3 class='bj'>
+                <span onclick="wancheng()" id="finish" style="display:none">完成编辑</span>
+                <span onclick="cancle()" id="cancle" style="display:none">取消编辑</span>
+                <span onclick="bianji()" id='b-j'>编辑背景</span>
+            </h3>
+            <!-- <span>背景图片：</span> -->
+        <!--  <div class="upload">
+                <input type="button" class="btn" onclick="browerfile.click()" value="上传">
+                <input type="file" id="browerfile" style="display: none;" class="test" name="desc">
+                <div class="img_center">
+                    <img src="" class="img1-img">
+                </div>
+            </div> -->
+            <div class=" all_660">
+                <div class="yd_box"></div>
+                <div class="cont"></div>
+            <!-- <div id="movie_box" ></div> -->      
+            </div>
         </div>
-    </div> -->
-    <div class=" all_660">
-        <div class="yd_box"></div>
-        <div class="cont"></div>
-    <!-- <div id="movie_box" ></div> -->      
-    </div>
-        <div class="but" style="padding-top: 20px">
+        <div class="but but-left" style="padding-top: 20px">
+            <h3>添加问题</h3>
+            @foreach($typeInfo as $k => $v)
+                <a href='javascript:void(0)' value="{{$v['id']}}">{{$v['name']}}</a>
+            @endforeach
             <select id="addquerstions" class="addquerstions" name="">
-              <option value="-1">添加问题</option>
-              @foreach($typeInfo as $k => $v)
+                <option value="-1">添加问题</option>
+                @foreach($typeInfo as $k => $v)
                 <option value="{{$v['id']}}">{{$v['name']}}</option>
                 @endforeach
             </select>
-            <input type="submit" value="完成编辑"></form>
+            <input type="submit" value="完成编辑">
         </div>
+    </form>
         <!--选项卡区域  模板区域-->
-        <div class="xxk_box">
+        <div class="xxk_box" style='margin:0;'>
             <div class="xxk_conn hide">
                 <!--单选-->
                 <div class="xxk_xzqh_box dxuan ">
@@ -171,6 +185,7 @@
             </div>
         </div>
     </div>
+    <div style='clear:both;'></div>
 </body>
 <script type="text/javascript" src="{{asset('vendors/jquery/jquery-1.7.1-wenjuan.js')}}"></script>  
 <script type="text/javascript" src="{{asset('vendors/jquery/wenjuan_add.js')}}"></script>
@@ -184,6 +199,12 @@
             UE.getEditor('editor').setEnabled();
             UE.getEditor('editor').setHide()
         });
+        $('.but-nav a').on("click",function(){
+            var that = $(this);
+            
+            that.addClass('a_c').siblings().removeClass('a_c');
+            $(".templates_type_id").attr('value',that.attr("value"));
+        })
      })
     function getContent() {
         var cont = UE.getEditor('editor').getContent()
@@ -204,26 +225,6 @@
         UE.getEditor('editor').setHide()
         $('#finish').css('display','none')
         $('#cancle').css('display','none')
-    }
-
-</script>
-<script>
-    var wxAudio = new Wxaudio({
-        ele: '#textaudio1',
-        title: 'Jar Of Love',
-        disc: 'Break Me Up',
-        src: 'http://jq22.qiniudn.com/ocean_drive_01.mp3',
-        width: '320px'
-    });
-    function play() {
-        wxAudio.audioPlay()
-    }
-
-    function cutM () {
-        var src = 'http://jq22com.qiniudn.com/jq22m1.mp3'
-        var title = 'ocean'
-        var disc = 'ocean111'
-        wxAudio.audioCut(src, title, disc)
     }
 </script>
 </html>

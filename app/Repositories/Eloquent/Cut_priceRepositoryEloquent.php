@@ -1,12 +1,12 @@
 <?php
 namespace App\Repositories\Eloquent;
 use Prettus\Repository\Eloquent\BaseRepository;
-use App\Models\Music;
+use App\Models\Cut_price;
 use Storage;
 /**
  * 角色仓库
  */
-class MusicRepositoryEloquent extends BaseRepository
+class Cut_priceRepositoryEloquent extends BaseRepository
 {
     /**
      * Specify Model class name
@@ -15,7 +15,7 @@ class MusicRepositoryEloquent extends BaseRepository
      */
     public function model()
     {
-        return Music::class;
+        return Cut_price::class;
     }
 
     /**
@@ -28,7 +28,7 @@ class MusicRepositoryEloquent extends BaseRepository
      * @param  [type]                   $order  [排序数组数据]
      * @return [type]                           [查询结果集，包含查询的数量及查询的结果对象]
      */
-    public function getMusicList($start,$length,$search)
+    public function getCut_priceList($start,$length,$search)
     {
         $role = $this->model;
         // if ($search['value']) {
@@ -38,7 +38,6 @@ class MusicRepositoryEloquent extends BaseRepository
         //         $role = $role->where('name', $search['value'])->orWhere('slug', $search['value']);
         //     }
         // }
-
         $count = $role->count();
         //$role = $role->orderBy($order['name'], $order['dir']);
 
@@ -94,10 +93,6 @@ class MusicRepositoryEloquent extends BaseRepository
      */
     public function del($where)
     {
-        //删除文件
-        $info = $this->model->where($where)->first();
-        $info->src = substr($info->src,9);
-        Storage::delete($info->src);
         return $this->model->where($where)->delete();
     }
 }

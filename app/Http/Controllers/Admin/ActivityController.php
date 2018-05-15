@@ -2,22 +2,16 @@
 namespace App\Http\Controllers\Admin;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Service\Admin\TemplatesService;
-use App\Service\Admin\Form_question_typeService;
-use App\Service\Admin\Templates_question_typeService;
-use App\Service\Admin\Templates_typeService;
-use App\Http\Requests\FormRequest;
+use App\Service\Admin\Cut_priceService;
 class ActivityController extends Controller
 {
     private $form;
 
-    function __construct(TemplatesService $templates,Templates_question_typeService  $templates_question_type,Templates_typeService $templates_typeService)
+    function __construct(Cut_priceService $cut_price)
     {
         // 自定义权限中间件
         $this->middleware('check.permission:user');
-        $this->templates = $templates;
-        $this->templates_typeService = $templates_typeService;
-        $this->templates_question_type = $templates_question_type;
+        $this->cut_price = $cut_price;
     }
 
     /**
@@ -29,15 +23,12 @@ class ActivityController extends Controller
     public function lists(Request $request,$id='')
     {
     	$where = [];
-        if (intval($id)) {
-            $where['templates_type_id'] = $id;
-        }
         //微活动条件
         $where['typeid'] = 2;
-        $responseData = $this->templates->ajaxLists($where,$action='activity');
+        $responseData = $this->cut_price->ajaxCutLists($where);
         //var_dump($responseData);die;
-        $templates_typeLists = $this->templates_typeService->findTypeAll();
-        return view('admin.templates.lists')->with(compact('responseData'))->with(compact('templates_typeLists'));
+        // $templates_typeLists = $this->templates_typeService->findTypeAll();
+        return view('admin.activity.lists')->with(compact('responseData'));
     }
 
     public function ajaxIndex()
@@ -82,7 +73,7 @@ class ActivityController extends Controller
      */
     public function answer(request $request)
     {
-        $this->templates->storeAnswer($request);
+        $this->cut_price->storeAnswer($request);
         return redirect('admin.form.lists');
     }
 
@@ -96,7 +87,7 @@ class ActivityController extends Controller
      */
     public function show($id)
     {
-        $info = $this->templates->findPreviewById($id);
+        $info = $this->cut_price->findPreviewById($id);
         $typeInfo = $this->templates_question_type->findTypeAll();
         $info['content_text'] =json_decode($info['content_text'],true);
        // var_dump(($info['content_text']));die;
@@ -111,7 +102,7 @@ class ActivityController extends Controller
      */
     public function custom($id)
     {
-        $info = $this->templates->findPreviewById($id);
+        $info = $this->cut_price->findPreviewById($id);
         $typeInfo = $this->templates_question_type->findTypeAll();
         $info['content_text'] =json_decode($info['content_text'],true);
        // var_dump(($info['content_text']));die;
@@ -128,9 +119,9 @@ class ActivityController extends Controller
     public function edit(Request $request,$id)
     {
         if($request->isMethod('post')){
-            $this->templates->editTemplates($request);
+            $this->cut_price->editTemplates($request);
         }
-        $info = $this->templates->findPreviewById($id);
+        $info = $this->cut_price->findPreviewById($id);
         $typeInfo = $this->templates_question_type->findTypeAll();
         $info['content_text'] = json_decode($info['content_text'],true);
         $templates_typeLists = $this->templates_typeService->findTypeAll();
@@ -162,7 +153,7 @@ class ActivityController extends Controller
      */
     public function destroy($id)
     {
-        $this->templates->destroyTemplates($id);
+        $this->cut_price->destroyTemplates($id);
         return redirect('admin/form/lists');
     }
 

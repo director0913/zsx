@@ -51,6 +51,7 @@ return [
 		'show' 		=> 'activity.show',
 		'edit' 	=> 'activity.edit',
 		'filter' 	=> 'activity.filter',
+		'create' 	=> 'activity.create',
 		'downexcel' 	=> 'activity.downexcel',
 	],
 	'music' => [
