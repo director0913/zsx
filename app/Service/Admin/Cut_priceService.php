@@ -1,6 +1,9 @@
 <?php
 namespace App\Service\Admin;
 use App\Repositories\Eloquent\Cut_priceRepositoryEloquent;
+use App\Repositories\Eloquent\Cut_price_tempRepositoryEloquent;
+use App\Repositories\Eloquent\Cut_price_logRepositoryEloquent;
+use App\Repositories\Eloquent\Cut_price_collectRepositoryEloquent;
 use App\Service\Admin\BaseService;
 use App\Models\Cut_price;
 use Illuminate\Http\Request;
@@ -14,11 +17,13 @@ use Excel;
 class Cut_priceService extends BaseService
 {
 	use ActionButtonAttributeTrait;
-	private $cut_price;
 	private $action;
-	function __construct(Cut_priceRepositoryEloquent $cut_price)
+	function __construct(Cut_priceRepositoryEloquent $cut_price,Cut_price_tempRepositoryEloquent $cut_price_temp,Cut_price_logRepositoryEloquent $cut_price_log,Cut_price_collectRepositoryEloquent $cut_price_collect)
 	{
 		$this->cut_price =  $cut_price;
+		$this->cut_price_temp =  $cut_price_temp;
+		$this->cut_price_collect =  $cut_price_collect;
+		$this->cut_price_log =  $cut_price_log;
 	}
 	/**
 	 * datatables获取数据
@@ -90,66 +95,6 @@ class Cut_priceService extends BaseService
 	{
 		return $this->role->all(['id','name']);
 	}
-		/**
-	 * 创建基础模版
-	 * @author 王浩
-	 * @date  2018-04-29
-	 * @param  [type]                   $formData [表单中所有的数据]
-	 * @return [type]                             [Boolean]
-	 */
-	public function storeAnswer(Request $request)
-	{
-
-		$formData = $request->all();
-		$parm['templates_id'] = isset($formData['templates_id']) && $formData['templates_id']?$formData['templates_id']:'';
-//		var_dump($formData);die;
-		if ($formData['node'] && is_array($formData['node'])) {
-			foreach ($formData['node'] as $k => $v) {
-				switch ($formData['type'.$v]) {
-					case '6':
-						$img1 = $request->file('node'.$v);
-				        if ($img1) { 
-				            //扩展名  
-				            $ext = $img1->getClientOriginalExtension();  
-				            //临时绝对路径  
-				            $realPath = $img1->getRealPath();  
-					        // 使用 store 存储文件
-					        $path = $img1->store(date('Ymd'));
-				            $parm['val'.intval($k+1)] = '/uploads/'.$path;
-				        }
-						break;
-					case '5':
-						$filePath =[];  // 定义空数组用来存放图片路径
-						if (isset($formData['node'.$v]) && is_array($formData['node'.$v])) {
-							foreach ($formData['node'.$v] as $key => $value) {
-								$file = $request->file($v);
-							  // 判断图片上传中是否出错
-								   // if (!$value->isValid()) {
-								   //    exit("上传图片出错，请重试！");
-								   // }
-							    if(!empty($value)){//此处防止没有多文件上传的情况
-									// $allowed_extensions = ["png", "jpg", "gif"];
-									// if ($value->getClientOriginalExtension() && !in_array($value->getClientOriginalExtension(), $allowed_extensions)) {
-									//     exit('您只能上传PNG、JPG或GIF格式的图片！');
-									// }
-									$path = $value->store(date('Ymd'));
-					            	$files[] = '/uploads/'.$path;
-					            	$parm['val'.intval($k+1)] = json_encode($files);
-							    }
-							}
-						}
-						break;
-					case '1':
-						$parm['val'.intval($k+1)] = json_encode($formData['node'.$v]);
-						break;
-					default:
-						$parm['val'.intval($k+1)] = $formData['node'.$v];
-						break;
-				}
-			}
-		}
-		return $this->Templates_answer->store($parm);
-	}
 	
 	/**
 	 * 创建基础模版
@@ -158,120 +103,54 @@ class Cut_priceService extends BaseService
 	 * @param  [type]                   $formData [表单中所有的数据]
 	 * @return [type]                             [Boolean]
 	 */
-	public function storeTemplates(Request $request)
+	public function store($formData,$request)
 	{
-		$formData = $request->all();
 		// var_dump($formData);die;
-		$form['title'] = $formData['title'];
-		$form['desc'] = $formData['desc'];
-		$form['created_at'] = date('Y-m-d H:i:s',time());
-		$form['templates_type_id'] = $formData['templates_type_id'];
-		//处理背景图片
-		// $img1 = $request->file('base_img');
-  //       if ($img1) { 
-  //           //扩展名  
-  //           $ext = $img1->getClientOriginalExtension();  
-  //           //临时绝对路径  
-  //           $realPath = $img1->getRealPath();  
-	 //        // 使用 store 存储文件
-	 //        $path = $img1->store(date('Ymd'));
-  //           $form['base_img'] = '/uploads/'.$path;
-  //       }
-		$form['base_img'] = $formData['base_img'];
-		//处理数据，保存json
-		if (isset($formData['node']) && is_array($formData['node'])) {
-			foreach ($formData['node'] as $k => $v) {
-				$parm[$k+1]['top'] = $formData['top'.$v];
-				$parm[$k+1]['left'] = $formData['left'.$v];
-				$parm[$k+1]['biaoti_title'] = $formData['biaoti_title'.$v];
-				//当前类型
-				$parm[$k+1]['type'] = $formData['type'.$v];
-				if (isset($formData['is_required'.$v])) {//存在则必填
-					$parm[$k+1]['is_required'] = 1;
-				}else{
-					$parm[$k+1]['is_required'] = 2;
-				}
-				switch ($parm[$k+1]['type']) {
-					//多选下的选项
-					case 15:
-					case 1:
-						if (isset($formData['duoxuan_option'.$v])) {
-							$parm[$k+1]['duoxuan_option'] = $formData['duoxuan_option'.$v];
-							
-						}
-						break;
-					default:
-						# code...
-						break;
-				}
+		$parm['title'] = $formData['title']?$formData['title']:'';
+		//间隔时间
+		$form['interval'] = isset($formData['interval']) && intval($formData['interval'])?intval($formData['interval']):'';
+		$parm['cut_price_id'] = isset($formData['cut_price_id']) && intval($formData['cut_price_id'])?intval($formData['cut_price_id']):'';
+		$form['old_price'] = isset($formData['old_price']) && intval($formData['old_price'])?intval($formData['old_price']):'';
+		$form['bottom_price'] = isset($formData['bottom_price']) && intval($formData['bottom_price'])?intval($formData['bottom_price']):'';
+		$form['min_price'] = isset($formData['min_price']) && intval($formData['min_price'])?intval($formData['min_price']):'';
+		$form['max_price'] = isset($formData['max_price']) && intval($formData['max_price'])?intval($formData['max_price']):'';
+		$form['cut_price_id'] = isset($formData['cut_price_id']) && intval($formData['cut_price_id'])?intval($formData['cut_price_id']):'';
+		$form['jiangpin_num'] = isset($formData['jiangpin_num']) && intval($formData['jiangpin_num'])?intval($formData['jiangpin_num']):'';
+		$form['start_at'] = $formData['start_at'];
+		$form['end_at'] = $formData['end_at'];
+		$form['jiangpin_info'] = $formData['jiangpin_info'];
+		$form['rule_info'] = $formData['rule_info'];
+		$form['lingjiang_info'] = $formData['lingjiang_info'];
+		$form['jigou_info'] = $formData['jigou_info'];
+		$form['store_name'] = $formData['store_name'];
+		$form['store_addr'] = $formData['store_addr'];
+		$form['store_phone'] = $formData['store_phone'];
+		$form['name'] = $formData['name'];
+		$form['phone'] = $formData['phone'];
+		$form['xinxi1'] = $formData['xinxi1'];
+		$form['xinxi2'] = $formData['xinxi2'];
+		$form['xinxi3'] = $formData['xinxi3'];
+		if (isset($formData['jiangpin_photo']) && $formData['jiangpin_photo']) {
+			foreach ($formData['jiangpin_photo'] as $k => $v) {
+			  	// 判断图片上传中是否出错
+				   // if (!$value->isValid()) {
+				   //    exit("上传图片出错，请重试！");
+				   // }
+			    if(!empty($v)){//此处防止没有多文件上传的情况
+					// $allowed_extensions = ["png", "jpg", "gif"];
+					// if ($value->getClientOriginalExtension() && !in_array($value->getClientOriginalExtension(), $allowed_extensions)) {
+					//     exit('您只能上传PNG、JPG或GIF格式的图片！');
+					// }
+					$path = $v->store(date('Ymd'));
+	            	$files[] = '/uploads/'.$path;
+	            	$form['jiangpin_photo'] = $files;
+			    }
 			}
-			$form['content_text'] = json_encode($parm);
-		}else{
-			$form['content_text'] = '';
 		}
-		$form['typeid'] = $formData['typeid'] ;
-		$result = $this->templates->store($form);
-	}
-	/**
-	 * 编辑模版所需数据
-	 * @author 王浩
-	 * @date  2018-04-29
-	 * @param  [type]                   $id [用户ID]
-	 * @return [type]                       [description]
-	 */
-	public function editTemplates(Request $request)
-	{
-		$formData = $request->all();
-			  //var_dump($formData);die;
-		$form['title'] = $formData['title'];
-		$form['desc'] = $formData['desc'];
-		$form['updated_at'] = date('Y-m-d H:i:s',time());
-		//处理背景图片
-		// $img1 = $request->file('base_img');
-  //       if ($img1) { 
-  //           //扩展名  
-  //           $ext = $img1->getClientOriginalExtension();  
-  //           //临时绝对路径  
-  //           $realPath = $img1->getRealPath();  
-	 //        // 使用 store 存储文件
-	 //        $path = $img1->store(date('Ymd'));
-  //           $form['base_img'] = '/uploads/'.$path;
-  //       }
-		$form['base_img'] = $formData['base_img'];
-		$form['templates_type_id'] = $formData['templates_type_id'];
-		//处理数据，保存json
-		if (isset($formData['node']) && is_array($formData['node'])) {
-			foreach ($formData['node'] as $k => $v) {
-				$parm[$k+1]['top'] = $formData['top'.$v];
-				$parm[$k+1]['left'] = $formData['left'.$v];
-				$parm[$k+1]['biaoti_title'] = $formData['biaoti_title'.$v];
-				//当前类型
-				$parm[$k+1]['type'] = $formData['type'.$v];
-				if (isset($formData['is_required'.$v])) {//存在则必填
-					$parm[$k+1]['is_required'] = 1;
-				}else{
-					$parm[$k+1]['is_required'] = 2;
-				}
-				switch ($parm[$k+1]['type']) {
-					//多选下的选项
-					case 15:
-					case 1:
-						if (isset($formData['duoxuan_option'.$v])) {
-							$parm[$k+1]['duoxuan_option'] = $formData['duoxuan_option'.$v];
-							
-						}
-						break;
-					default:
-						# code...
-						break;
-				}
-			}
-			$form['content_text'] = json_encode($parm);
-		}else{
-			$form['content_text'] = '';
-		}
-		$where['id'] = $formData['id'];
-		$result = $this->templates->edit($where,$form);
+		$parm['created_at'] = date('Y-m-d H:i:s',time());
+		$parm['info'] = json_encode($form);
+		$parm['user_id'] = isset($formData['now_id']) && intval($formData['now_id'])?intval($formData['now_id']):'';
+		return $this->cut_price_temp->store($parm);
 	}
 	/**
 	 * 根据ID获取模版预览数据
@@ -280,10 +159,84 @@ class Cut_priceService extends BaseService
 	 * @param  [type]                   $id [权限id]
 	 * @return [type]                       [查询出来的权限对象，查不到数据时跳转404]
 	 */
-	public function findPreviewById($id)
+	public function findCut_priceAll()
 	{
-		$parm['id'] = $id;
-		$role =  $this->templates->findOne($parm);
+		$role =  $this->cut_price->findAll();
+		if ($role) {
+			return $role;
+		}
+		abort(404);
+	}
+	/**
+	 * 获取是否已经砍价
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @param  [type]                   $id [权限id]
+	 * @return [type]                       [查询出来的权限对象，查不到数据时跳转404]
+	 */
+	public function findCut_price_logOne($formData)
+	{
+		$role =  $this->cut_price_log->findOne($formData);
+		if ($role) {
+			return $role;
+		}
+		abort(404);
+	}
+	/**
+	 * 根据ID获取模版预览数据
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @param  [type]                   $id [权限id]
+	 * @return [type]                       [查询出来的权限对象，查不到数据时跳转404]
+	 */
+	public function findCut_priceOne($formData)
+	{
+		$role =  $this->cut_price->findOne($formData);
+		if ($role) {
+			return $role;
+		}
+		abort(404);
+	}
+	/**
+	 * 根据ID获取模版预览数据
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @param  [type]                   $id [权限id]
+	 * @return [type]                       [查询出来的权限对象，查不到数据时跳转404]
+	 */
+	public function updateCut_price_collect($formData,$where)
+	{
+		$role =  $this->cut_price_collect->edit($formData,$where);
+		if ($role) {
+			return $role;
+		}
+		abort(404);
+	}
+	/**
+	 * 根据获取收集表，看看是不是已经到最低价格
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @param  [type]                   数组
+	 * @return [type]                       [查询出来的权限对象，查不到数据时跳转404]
+	 */
+	public function findCut_price_collectOne($formData)
+	{
+		$role =  $this->cut_price_collect->findOne($formData);
+		if ($role) {
+			return $role;
+		}
+		abort(404);
+	}
+	/**
+	 * 根据ID获取模版预览数据
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @param  [type]                   $id [权限id]
+	 * @return [type]                       [查询出来的权限对象，查不到数据时跳转404]
+	 */
+	public function findCut_price_tempOne($formData)
+	{
+		$role =  $this->cut_price_temp->findOne($formData);
 		if ($role) {
 			return $role;
 		}
@@ -346,6 +299,38 @@ class Cut_priceService extends BaseService
 			$this->sendSystemErrorMail(env('MAIL_SYSTEMERROR',''),$e);
 			return false;
 		}
+		
+	}
+	/**
+	 * 插入砍价表
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @param  [type]                   $id [用户ID]
+	 * @return [type]                       [Boolean]
+	 */
+	public function storeCut_price_log($parm)
+	{
+		return $this->cut_price_log->store($parm);
+		
+	}
+	/**
+	 * 插入用户信息收集表
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @param  [type]                   $id [用户ID]
+	 * @return [type]                       [Boolean]
+	 */
+	public function storeCut_price_collect($form)
+	{
+		$parm['phone'] = $form['phone'];
+		$data['name'] = $form['name'];
+		$data['xinxi1'] = $form['xinxi1'];
+		$data['xinxi2'] = $form['xinxi2'];
+		$data['xinxi3'] = $form['xinxi3'];
+		$parm['info'] = json_encode($data);
+		$parm['now_price'] = $form['now_price'];
+		//var_dump($parm);di
+		return $this->cut_price_collect->store($parm);
 		
 	}
 	/**

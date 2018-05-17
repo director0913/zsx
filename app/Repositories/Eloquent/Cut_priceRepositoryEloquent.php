@@ -59,6 +59,16 @@ class Cut_priceRepositoryEloquent extends BaseRepository
     {
         return $this->model->where($formData)->first();
     }
+        /**
+     * 查询角色并分页
+     * @author 晚黎
+     * @date   2016-11-02T15:17:24+0800
+     * @return [type]     findCut_priceAll                      [查询结果集，包含查询的数量及查询的结果对象]
+     */
+    public function findAll()
+    {
+        return $this->model->get();
+    }
     /**
      * 查询角色并分页
      * @author 晚黎
