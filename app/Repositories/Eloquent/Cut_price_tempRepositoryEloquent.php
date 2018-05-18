@@ -28,7 +28,7 @@ class Cut_price_tempRepositoryEloquent extends BaseRepository
      * @param  [type]                   $order  [排序数组数据]
      * @return [type]                           [查询结果集，包含查询的数量及查询的结果对象]
      */
-    public function getCut_priceList($start,$length,$search)
+    public function getCut_price_tempList($start,$length,$search,$order='id')
     {
         $role = $this->model;
         // if ($search['value']) {
@@ -39,9 +39,10 @@ class Cut_price_tempRepositoryEloquent extends BaseRepository
         //     }
         // }
         $count = $role->count();
+
         //$role = $role->orderBy($order['name'], $order['dir']);
 
-        $roles = $role->offset($start)->limit($length)->get();
+        $roles = $role->join('cut_price', 'cut_price_temp.cut_price_id', '=', 'cut_price.id')->offset($start)->limit($length)->select('cut_price_temp.*','cut_price.title as typename')->get();
 
         return compact('count','roles');
     }

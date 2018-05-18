@@ -49,6 +49,24 @@ class ActivityController extends Controller
     }
 
     /**
+     *统计详情
+     * @author 王浩
+     * @date   2018-04-29
+     * @param  FormRequest              $request [description]
+     * @return [type]                            [description]
+     */
+    public function total($id)
+    {   
+        $parm['id'] = $id;
+        $info = $this->cut_price->getTotalLists($parm);
+        if ($info) {
+            foreach ($info as $k => $v) {
+                $info[$k]['info'] = json_decode($v->info,true);
+            }
+        }
+        return view('admin.activity.total')->with(compact('info'));
+    }
+    /**
      *微活动列表
      * @author 王浩
      * @date   2018-04-29

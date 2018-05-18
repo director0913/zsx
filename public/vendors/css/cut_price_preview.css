@@ -458,9 +458,27 @@ input[type="checkbox"]:checked+label::before{
 	margin-top:0.8rem;
 
 }
-.rank-header ul li{
+.rank-header ul li:nth-child(1),.rank-list ul li:nth-child(1){
 	float: left;
-	width:1.35rem;
+	margin-right: .2rem;
+	overflow: hidden;
+	width:1.3rem;
+	text-align: center;
+	color:#f00
+}
+.rank-header ul li:nth-child(2),.rank-list ul li:nth-child(2){
+	float: left;
+	text-align: center;
+	overflow: hidden;
+	width:2.8rem;
+	color:#f00
+}
+.rank-header ul li:nth-child(3),.rank-list ul li:nth-child(3){
+	float: left;
+	text-align: center;
+	margin-left: .2rem;
+	overflow: hidden;
+	width:1.5rem;
 	color:#f00
 }
 .footer{

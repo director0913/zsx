@@ -10,5 +10,6 @@ $router->group(['prefix' => 'activity'],function ($router)
 	$router->get('/lists/{id?}','ActivityController@lists')->name('activity.lists');
 	$router->get('/show/{id}','ActivityController@show')->name('activity.show');
 	$router->any('/answer','ActivityController@answer')->name('activity.answer');
+	$router->any('total/{id}','ActivityController@total')->name('activity.total');
 });
 $router->resource('activity','ActivityController');

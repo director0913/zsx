@@ -4,10 +4,28 @@
     <meta charset="utf-8">
     <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title></title>
+    <script src="{{asset('vendors/jquery/jquery-2.1.1.js')}}" type="text/javascript" charset="utf-8"></script>
     <script src="{{asset('vendors/jquery/cut_price.js')}}" type="text/javascript" charset="utf-8"></script>
     <link rel="stylesheet" type="text/css" href="{{asset('vendors/css/cut_price.css')}}"/>
 </head>
+<style>
+	.music-logo {
+	    width: 30px;
+	    height: 30px;
+	    background: url("img/music.gif");
+	    background-size: 30px auto;
+	    position: absolute;
+	    top: 10px;
+	    left: 10px;
+	    z-index: 5;
+	}
+	.music-logo.playing {
+	    -webkit-animation: 2.3s spin linear infinite;
+	}
+</style>
 <body>
+	<audio loop autoplay="autoplay" src = "{{asset('vendors/css/bg.mp3')}}"></audio>
+	<div class="music-logo" id="music-logo"></div>
 	<form action="{{url('activity/store')}}" method="POST" enctype="multipart/form-data">
 	<?php echo csrf_field(); ?>
 	<input type="hidden" value="{{$id}}" name="cut_price_id">
@@ -46,11 +64,11 @@
 				</div>
 			</div>
 			<textarea class="text" name="rule_info">少儿班6课时，一个月课程，新老学生均可参加此活动，原价300元 ，最低可减至2元。</textarea>
-			<div class="h_but">
+			<!-- <div class="h_but">
 				<div class="b_1">添加文字</div>
 				<div class="b_2">添加图片</div>
 				<div class="b_3">添加视频</div>
-			</div>
+			</div> -->
 		</div>
 		<div class="l_j">
 			<div class="bj">
@@ -59,11 +77,11 @@
 				</div>
 			</div>
 			<textarea class="text" name="lingjiang_info">少儿班6课时，一个月课程，新老学生均可参加此活动，原价300元 ，最低可减至2元。</textarea>
-			<div class="h_but">
+			<!-- <div class="h_but">
 				<div class="b_1">添加文字</div>
 				<div class="b_2">添加图片</div>
 				<div class="b_3">添加视频</div>
-			</div>
+			</div> -->
 		</div>
 		<div class="l_j">
 			<div class="bj">
@@ -72,11 +90,11 @@
 				</div>
 			</div>
 			<textarea class="text" name="jigou_info">少儿班6课时，一个月课程，新老学生均可参加此活动，原价300元 ，最低可减至2元。</textarea>
-			<div class="h_but">
+			<!-- <div class="h_but">
 				<div class="b_1">添加文字</div>
 				<div class="b_2">添加图片</div>
 				<div class="b_3">添加视频</div>
-			</div>
+			</div> -->
 		</div>
 		<div class="add_user">
 			<div class="bj">
@@ -90,7 +108,7 @@
 <!-- 				<p class="p2"><input type="text" placeholder="点击定位地址"/></p>
  -->				<p class="p3"><input type="text" name="store_addr" placeholder="请输入门店地址"/></p>
 				<p class="p4"><input type="text" name="store_phone" placeholder="请输入联系电话"/></p>
-				<a href="" class="bt"></a>
+				<!-- <a href="" class="bt"></a> -->
 			</div>
 			<!-- <div class="a_t">+点击添加门店</div> -->
 		</div>
@@ -139,7 +157,7 @@
 	       
 		</div>
 		<!-- 排行榜 -->
-		<div class="add_info">
+		<!-- <div class="add_info">
 			<div class="bj">
 				<div class="bj_text">
 					排行榜
@@ -155,14 +173,53 @@
 					</div>
 					<div class="rank-list"></div>
 				</div>
-		</div>
+		</div> -->
 		<div class="footer">
 			<ul>
 				<li>预约活动</li>
-				<li><input type="submit" value="保存活动"></li>
+				<li><input type="submit" onclick="return check()" value="保存活动"></li>
 			</ul>
 		</div>
 	</div>
 	</form>
 </body>
+<script>
+	var audio = document.querySelector( "audio" );
+	var musicLogo = document.querySelector( ".music-logo" );
+	var isStart = true;
+	musicLogo.onclick=function(){
+        if ( isStart == false ) {
+			musicLogo.classList.add( "playing" );
+//				audio.src = "img/bg.mp3";
+			audio.play();
+			isStart = true;
+		}else if(isStart != false){
+			
+			audio.pause();
+			isStart = false;	
+		}	         
+    }
+	function check(){
+		var store_name = $('[name="store_name"]').val();
+		var store_addr = $('[name="store_addr"]').val();
+		var store_phone = $('[name="store_phone"]').val();
+		var title = $('[name="title"]').val();
+		if (!store_name) {
+			alert("请填写门店名称！")
+			return false;
+		}
+		if (!store_addr) {
+			alert("请填写门店地址！")
+			return false;
+		}
+		if (!store_phone) {
+			alert("请填写门店电话！")
+			return false;
+		}
+		if (!title) {
+			alert("请填写活动名称！")
+			return false;
+		}
+	}
+</script>
 </html>

@@ -29,18 +29,42 @@
 				background: #fff;
 			}
 			.p_r input[type=submit]{
-				width:100%;
+				width:40%;
 				height: .6rem;
 				border: 0;
 				margin:0 auto;
 				padding: 0;
 				background: #cdcdcd;
 			}
+			.p_r input[type=button]{
+				width:40%;
+				height: .6rem;
+				border: 0;
+				margin:0 auto;
+				padding: 0;
+				background: #cdcdcd;
+			}
+			.music-logo {
+			    width: 30px;
+			    height: 30px;
+			    background: url("{{asset('vendors/css/images/music.gif')}}");
+			    background-size: 30px auto;
+			    position: absolute;
+			    top: 10px;
+			    left: 10px;
+			    z-index: 5;
+			}
+			.music-logo.playing {
+			    -webkit-animation: 2.3s spin linear infinite;
+			}
+
 		</style>
 <body>
 	<div class="warp">
+		<audio loop autoplay="autoplay" src = "{{asset('vendors/css/bg.mp3')}}"></audio>
+		<div class="music-logo" id="music-logo"></div>
 		<div class="head">
-			{{isset($info['info']['title'])?$info['info']['title']:''}}
+			{{isset($info['title'])?$info['title']:''}}
 		</div>
 		<p class="time">
 			<span>活动时间：</span><input type="text" disabled="disabled" value="{{$info['info']['start_at']}}"/>到<input type="text" disabled="disabled"  value="{{$info['info']['end_at']}}" />
@@ -72,9 +96,9 @@
 				</div>
 			</div>
 			<p class="text">{{$info['info']['rule_info']}}</p>
-			<div class="add_">
+			<!-- <div class="add_">
 				<img src="{{asset('vendors/images/icon1.png')}}"/>
-			</div>
+			</div> -->
 		</div>
 		<div class="l_j">
 			<div class="bj">
@@ -83,9 +107,9 @@
 				</div>
 			</div>
 			<p class="text">{{$info['info']['lingjiang_info']}}</p>
-			<div class="add_">
+			<!-- <div class="add_">
 				<img src="{{asset('vendors/images/icon1.png')}}"/>
-			</div>
+			</div> -->
 		</div>
 		<div class="j_g">
 			<div class="bj">
@@ -172,23 +196,21 @@
 						</ul>
 					</div>
 					<div class="rank-list">
-						<ul>
-							@if($rank)
-								@foreach($rank as $k=>$v)
-									<li>{{intval($k+1)}}</li>
-									<li>{{substr($v->phone,0,6)}}****</li>
-									<li>{{$v->now_price}}</li>
-								@endforeach
-							@endif
-						</ul>
+						@if($rank)
+							@foreach($rank as $k=>$v)
+							<ul>
+								<li>{{intval($k+1)}}</li>
+								<li>{{substr($v->phone,0,6)}}****</li>
+								<li>{{$v->now_price}}</li>
+							</ul>
+							@endforeach
+						@endif
 					</div>
-				</div>
-			
-	       
+				</div>			
 		</div>
 		<div class="footer" >
 			<ul>
-				<li id="cut_price">砍价</li>
+				@if($collect_id)<li id="cut_price">砍价</li>@endif
 				<li class="c_j">我要参加</li>
 			</ul>
 		</div>
@@ -200,22 +222,47 @@
 			<div class="list-left">
 				<ul>
 					<li><input type="text" name="name" placeholder="姓名"/></li>
-					<li><input type="text" name="phone" placeholder="手机号码"/></li>
+					<li><input type="text" name="phone"   placeholder="手机号码"/></li>
 					<li><input type="text" name="xinxi1" placeholder="信息项名称"/></li>
 					<li><input type="text" name="xinxi2" placeholder="信息项名称"/></li>
 					<li><input type="text" name="xinxi3" placeholder="信息项名称"/></li>
 				</ul>
 			</div>
 			<div class="list-left">
-				<input type="submit" value="参加">
+				<input type="submit" onclick="return check()" value="参加">
+				<input type="button" class="q_x" value="取消">
 			</div>
 		</form>
 	</div>
 </body>
 <script type="text/javascript">
-	$('#cut_price').click(function(){
+	@if($collect_id)
+		$('#cut_price').click(function(){
+			$.ajax({
+				url: "{{url('/activity/ajaxCut_priceButton')}}",
+				type: 'POST',
+				dataType: 'json',
+				data: {collect_id:{{$collect_id?$collect_id:'1'}},temp_id:{{$info['id']}}},
+				headers: {
+					'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+				},
+			})
+			.done(function(data) {
+				alert(data.message)
+			})
+			.fail(function() {
+				console.log("error");
+			})
+			.always(function() {
+				console.log("complete");
+			});
+			
+		})
+	@endif
+	//检测是否可以参加
+	$('.c_j').click(function(){
 		$.ajax({
-			url: "{{url('/activity/ajaxCut_priceButton')}}",
+			url: "{{url('/activity/ajaxJoinButton')}}",
 			type: 'POST',
 			dataType: 'json',
 			data: {collect_id:{{$collect_id?$collect_id:'1'}},temp_id:{{$info['id']}}},
@@ -224,7 +271,11 @@
 			},
 		})
 		.done(function(data) {
-			alert(data.message)
+			if (data.status) {
+				$(".p_r").show();
+			}else{
+				alert(data.message)	
+			}
 		})
 		.fail(function() {
 			console.log("error");
@@ -234,8 +285,35 @@
 		});
 		
 	})
-	$(".c_j").click(function(){
-		$(".p_r").show();
-	})
+	$(".q_x").click(function(){
+		$(".p_r").hide();
+	});
+	var audio = document.querySelector( "audio" );
+	var musicLogo = document.querySelector( ".music-logo" );
+	var isStart = true;
+	musicLogo.onclick=function(){
+        if ( isStart == false ) {
+			musicLogo.classList.add( "playing" );
+//				audio.src = "img/bg.mp3";
+			audio.play();
+			isStart = true;
+		}else if(isStart != false){
+			audio.pause();
+			isStart = false;	
+		} 
+    }
+	function check(){
+		var reg=/^1[3|4|5|8][0-9]\d{4,8}$/;
+		var phone = $('[name="phone"]').val();
+		if (!phone) {
+			alert("请填写手机号码！")
+			return false;
+		}else if(!reg.test(phone)){
+			alert("请正确填写手机号码！");
+			$('[name="phone"]').val('')
+			return false
+		}
+		
+	}
 </script>
 </html>

@@ -5,31 +5,19 @@
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-lg-10">
-    <h2>微活动列表</h2>
+    <h2>统计详情</h2>
     <ol class="breadcrumb">
         <li>
-            <a href="{{url('admin/dash')}}">{!!trans('admin/breadcrumb.home')!!}</a>
-        </li>
-        <li class="active">
-            <strong>{!!trans('admin/breadcrumb.user.list')!!}</strong>
+            <a href="{{url('admin/activity/lists')}}">微活动列表</a>
         </li>
     </ol>
   </div>
-  @permission(config('admin.permissions.activity.create'))
-  <div class="col-lg-2">
-    <div class="title-action">
-      <a href="{{url('admin/activity/create')}}" class="btn btn-info">{!!trans('admin/activity.action.create')!!}</a>
-    </div>
-  </div>
-  @endpermission
 </div>
 <div class="wrapper wrapper-content animated fadeInRight">
   <div class="row">
     <div class="col-lg-12">
       <div class="ibox float-e-margins">
         <div class="ibox-title">
-
-          活动总数：123     总浏览量：1232     报名总数：1111111
           <div class="ibox-tools">
             <a class="collapse-link">
               <i class="fa fa-chevron-up"></i>
@@ -45,26 +33,27 @@
 	          <table class="table table-striped table-bordered table-hover dataTablesAjax" >
 		          <thead>
 			          <tr>
-			            <th>编号</th>
-			            <th>活动类型</th>
-			            <th>活动标题</th>
-			            <th>活动时间</th>
-			            <th>活动状态</th>
-			            <th>数据统计</th>
-                  <th>创建时间</th>
+			            <th>序号</th>
+			            <th>姓名</th>
+			            <th>手机号</th>
+			            <th>当前价格</th>
+			            <th>状态</th>
+			            <th>完成时间</th>
+                  <th>核销</th>
+                  <th>报名时间</th>
                   <th>操作</th>
 			          </tr>
 		          </thead>
 		          <tbody>
-                @foreach($responseData['data'] as $k => $v)
+                @foreach($info as $k => $v)
                 <tr role="row" class="odd">
                   <td class="sorting_1">{{$v['id']}}</td>
-                  <td>{{$v['typename']}}</td>
-                  <td>{{$v['title']}}</td>
-                  <td>{{$v['info']['start_at']}}--{{$v['info']['end_at']}}</td>
-                  <td>{{$v['status']}}</td>
-                  <td><a href="{{url('/admin/activity/total/'.$v['id'])}}">统计详情</a></td>
-                  <td>{!! $v['created_at'] !!}</td>
+                  <td>{{$v['info']['name']}}</td>
+                  <td>{{$v['phone']}}</td>
+                  <td>{{$v['now_price']}}</td>
+                  <td>{{$v['isSign']==1?'已完成':'已完成'}}</td>
+                  <td>{{$v['isSign']==1?'已核销':'未核销'}}</td>
+                  <td>{{$v['created_at']}}</td>
                   <td>{!! $v['action'] !!}</td>
                 </tr>
                 @endforeach

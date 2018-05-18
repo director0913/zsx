@@ -47,16 +47,25 @@ class Cut_priceService extends BaseService
 		// 排序
 		$order['name'] = request('columns.' .request('order.0.column',0) . '.name','id');
 		$order['dir'] = request('order.0.dir','asc');
-		$result = $this->cut_price->getCut_priceList($start,$length,$search,$order);
-		// /var_dump($result['roles']);die;
+		$result = $this->cut_price_temp->getCut_price_tempList($start,$length,$search,$order);
+		
 		$this->action = $action;
 		if ($result['roles']) {
 			foreach ($result['roles'] as $k=>$v) {
 				$this->id = $v->id;
 				//$result['roles'][$k]['actionButton'] = $this->getActionButtonAttribute(false);
 				$result['roles'][$k]['action'] = $this->getActionButtonAttribute(true);
+				$result['roles'][$k]['info'] = json_decode($v->info,true);
+				if (strtotime($result['roles'][$k]['info']['end_at'])<=time()) {
+					$result['roles'][$k]['status'] = '已结束！';
+				}elseif(strtotime($result['roles'][$k]['info']['end_at'])>time() && strtotime($result['roles'][$k]['info']['start_at'])>time()){
+					$result['roles'][$k]['status'] = '未开始！';
+				}elseif(strtotime($result['roles'][$k]['info']['end_at'])>time() && strtotime($result['roles'][$k]['info']['start_at'])<time()){
+					$result['roles'][$k]['status'] = '进行中！';
+				}
 			}
 		}
+		//var_dump($result['roles']->toArray());die;
 	//	return $result;
 		return [
 			'draw' => $draw,
@@ -74,6 +83,17 @@ class Cut_priceService extends BaseService
 	public function createView()
 	{
 		return [$this->getAllPermissionList(),$this->getAllRoles()];
+	}
+	/**
+	 * 统计详情
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @return [type]                   [description]
+	 */
+	public function getTotalLists($formData)
+	{
+		return $this->cut_price_collect->findAll(['temo_id'=>$formData['id']]);
+		
 	}
 	/**
 	 * 获取所有权限并分组

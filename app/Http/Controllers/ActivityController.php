@@ -117,6 +117,28 @@ class ActivityController extends Controller
         return redirect('/activity/show/'.$parm['temp_id'].'/'.$res);
         //查询需要预览的模版
     }
+        /**
+     * 检测是否可参加活动
+     * @author 王浩
+     * @date   2018-04-29
+     * @param  [type]                   $id [description]
+     * @return [type]                       [description]
+     */
+    public function ajaxJoinButton(request $request)
+    {
+        $parm = $request->all();
+        //检查是不是已经到最低价了
+        $cut_price_collect_temp = $this->cut_price->findCut_price_tempOne(['id'=>$parm['temp_id']]);
+        $cut_price_collect_temp['info'] =json_decode($cut_price_collect_temp['info'],true);
+        //检查是不是开始砍价了
+        if (strtotime($cut_price_collect_temp['info']['start_at']) > (time()-86400)) {
+            return  response()->json(['status' => false, 'message' => '活动尚未开始！']);
+        }
+        if (strtotime($cut_price_collect_temp['info']['end_at']) < (time()-86400)) {
+            return  response()->json(['status' => false, 'message' => '活动已经结束！']);
+        }
+        return  response()->json(['status' => true, 'message' => '赶快参加活动吧！']);
+    }
     /**
      * 前台砍价按钮
      * @author 王浩
@@ -131,6 +153,15 @@ class ActivityController extends Controller
         $cut_price_collect_info = $this->cut_price->findCut_price_collectOne(['id'=>$parm['collect_id']]);
         $cut_price_collect_temp = $this->cut_price->findCut_price_tempOne(['id'=>$parm['temp_id']]);
         $cut_price_collect_temp['info'] =json_decode($cut_price_collect_temp['info'],true);
+        //检查是不是开始砍价了
+        if (strtotime($cut_price_collect_temp['info']['start_at']) > (time()-86400)) {
+            return  response()->json(['status' => false, 'message' => '活动尚未开始！']);
+        }
+        if (strtotime($cut_price_collect_temp['info']['end_at']) < (time()-86400)) {
+            return  response()->json(['status' => false, 'message' => '活动已经结束！']);
+        }
+
+
         if ($cut_price_collect_temp['info']['bottom_price']==$cut_price_collect_temp->now_price) {
             return  response()->json(['status' => false, 'message' => '当前价格已经是底价了，不能再砍价了！']);
         }
