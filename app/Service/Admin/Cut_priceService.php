@@ -243,42 +243,28 @@ class Cut_priceService extends BaseService
 		abort(404);
 	}
 	/**
-	 * 修改用户
+	 * 浏览量加一
 	 * @author 王浩
 	 * @date  2018-04-29
 	 * @param  [type]                   $attributes [表单数据]
 	 * @param  [type]                   $id         [resource路由传递过来的id]
 	 * @return [type]                               [Boolean]
 	 */
-	public function updateUser($attributes,$id)
+	public function editCut_price_temp($formData,$where)
 	{
-		// 防止用户恶意修改表单id，如果id不一致直接跳转500
-		if ($attributes['id'] != $id) {
-			abort(500,trans('admin/errors.user_error'));
-		}
-		try {
-			$result = $this->user->update($attributes,$id);
-			if ($result) {
-				// 更新用户角色关系
-				if (isset($attributes['role'])) {
-					$result->roles()->sync($attributes['role']);
-				}else{
-					$result->roles()->sync([]);
-				}
-				// 更新用户权限关系
-				if (isset($attributes['permission'])) {
-					$result->userPermissions()->sync($attributes['permission']);
-				}else{
-					$result->userPermissions()->sync([]);
-				}
-			}
-			flash_info($result,trans('admin/alert.user.edit_success'),trans('admin/alert.user.edit_error'));
-			return $result;
-		} catch (Exception $e) {
-			// 错误信息发送邮件
-			$this->sendSystemErrorMail(env('MAIL_SYSTEMERROR',''),$e);
-			return false;
-		}
+		$this->cut_price_temp->edit($formData,$where);
+	}
+	/**
+	 * 获取排行榜
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @param  [type]                   $search [表单数据]
+	 * @param  [type]                  默认获取前十
+	 * @return [type]                               [Boolean]
+	 */
+	public function getCut_price_collectRank($search)
+	{
+		return $this->cut_price_collect->getCut_price_collectList(0,10,$search);
 	}
 	/**
 	 * 直接删除

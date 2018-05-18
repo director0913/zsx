@@ -28,7 +28,7 @@ class Cut_price_collectRepositoryEloquent extends BaseRepository
      * @param  [type]                   $order  [排序数组数据]
      * @return [type]                           [查询结果集，包含查询的数量及查询的结果对象]
      */
-    public function getCut_priceList($start,$length,$search)
+    public function getCut_price_collectList($start,$length,$search)
     {
         $role = $this->model;
         // if ($search['value']) {
@@ -41,9 +41,9 @@ class Cut_price_collectRepositoryEloquent extends BaseRepository
         $count = $role->count();
         //$role = $role->orderBy($order['name'], $order['dir']);
 
-        $roles = $role->offset($start)->limit($length)->get();
+        $roles = $role->where($search)->offset($start)->limit($length)->orderBy('now_price','desc')->get();
 
-        return compact('count','roles');
+        return $roles;
     }
     /**
      * 查询角色并分页

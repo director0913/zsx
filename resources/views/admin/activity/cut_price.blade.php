@@ -14,7 +14,7 @@
 	<input type="hidden" value="{{$id1}}" name="now_id">
 	<div class="warp">
 		<div class="head">
-			<input type="text" placeholder="XX机构数招进行中，课程疯狂低价" value="XX机构数招进行中，课程疯狂低价" name="title">
+			<textarea type="text" placeholder="XX机构数招进行中，课程疯狂低价" value="XX机构数招进行中，课程疯狂低价" name="title"></textarea>
 		</div>
 		<p class="time">
 			<span>活动时间：</span><input type="date" name="start_at"/>到<input type="date" name="end_at"/>
@@ -34,13 +34,17 @@
 			</textarea>
 			<div class="add_">
 				<div class="add_but">
-					
+					<input type="file" name="jiangpin_photo[]" style="opacity: 0; width: 100%; height: 100%;">
 				</div>
-				<p><input type="file" name="jiangpin_photo[]">(请上传5张奖品图片，不上传则不显示)</p>
+				<p>(请上传5张奖品图片，不上传则不显示)</p>
 			</div>
 		</div>
 		<div class="h_d">
-			<div class="bj"></div>
+			<div class="bj">
+				<div class="bj_text">
+					活动规则
+				</div>
+			</div>
 			<textarea class="text" name="rule_info">少儿班6课时，一个月课程，新老学生均可参加此活动，原价300元 ，最低可减至2元。</textarea>
 			<div class="h_but">
 				<div class="b_1">添加文字</div>
@@ -49,7 +53,11 @@
 			</div>
 		</div>
 		<div class="l_j">
-			<div class="bj"></div>
+			<div class="bj">
+				<div class="bj_text">
+					领奖信息 
+				</div>
+			</div>
 			<textarea class="text" name="lingjiang_info">少儿班6课时，一个月课程，新老学生均可参加此活动，原价300元 ，最低可减至2元。</textarea>
 			<div class="h_but">
 				<div class="b_1">添加文字</div>
@@ -58,7 +66,11 @@
 			</div>
 		</div>
 		<div class="l_j">
-			<div class="bj"></div>
+			<div class="bj">
+				<div class="bj_text">
+					机构介绍
+				</div>
+			</div>
 			<textarea class="text" name="jigou_info">少儿班6课时，一个月课程，新老学生均可参加此活动，原价300元 ，最低可减至2元。</textarea>
 			<div class="h_but">
 				<div class="b_1">添加文字</div>
@@ -67,7 +79,11 @@
 			</div>
 		</div>
 		<div class="add_user">
-			<div class="bj"></div>
+			<div class="bj">
+				<div class="bj_text">
+					信息收集
+				</div>
+			</div>
 			<div class="user_1">
 				<h3>门店</h3>
 				<p class="p1"><input type="text" name="store_name" placeholder="请输入门店名称"/></p>
@@ -104,16 +120,16 @@
 					<div class="list-right">
 						
 							<div class="checkbox-wrap">
-									<input type="checkbox" value="guangpan" name="choose" id="guangpan">
-									<label for="guangpan">必填项</label>
-									<input type="checkbox" value="kaiche" name="choose" id="kaiche">
-									<label for="kaiche">必填项</label>
-									<input type="checkbox" value="laiji" name="choose" id="laiji">
-									<label for="laiji">必填项</label>
-									<input type="checkbox" value="baozhuang" name="choose" id="baozhuang">
-									<label for="baozhuang">必填项</label>
-									<input type="checkbox" value="bao" name="choose" id="bao">
-									<label for="bao">必填项</label>
+									<p><input type="checkbox" value="guangpan" name="choose" id="guangpan">
+									<label for="guangpan">必填项</label></p>
+									<p><input type="checkbox" value="kaiche" name="choose" id="kaiche">
+									<label for="kaiche">必填项</label></p>
+									<p><input type="checkbox" value="laiji" name="choose" id="laiji">
+									<label for="laiji">必填项</label></p>
+									<p><input type="checkbox" value="baozhuang" name="choose" id="baozhuang">
+									<label for="baozhuang">必填项</label></p>
+									<p><input type="checkbox" value="bao" name="choose" id="bao">
+									<label for="bao">必填项</label></p>
 							</div>
 					
 					</div>

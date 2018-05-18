@@ -84,7 +84,7 @@ class ActivityController extends Controller
      * @param  [type]                   $id [description]
      * @return [type]                       [description]
      */
-    public function show($id,$collect_id)
+    public function show($id,$collect_id='')
     {
 
         $info = $this->cut_price->findCut_price_tempOne(['id'=>$id]);
@@ -92,7 +92,11 @@ class ActivityController extends Controller
         //查询需要预览的模版
         $preview = $this->cut_price->findCut_priceOne(['id'=>$info->cut_price_id]);
        // var_dump(($info['content_text']));die;
-        return view('admin.activity.'.$preview->tem_name.'_preview')->with(compact('info'))->with(compact('collect_id'));
+        //浏览量加1
+        $this->cut_price->editCut_price_temp(['views'=>$info->views+1],['id'=>$id]);
+        //获取排行榜
+        $rank = $this->cut_price->getCut_price_collectRank(['temp_id'=>$id]);
+        return view('admin.activity.'.$preview->tem_name.'_preview')->with(compact('info'))->with(compact('collect_id'))->with(compact('rank'));
     }
      /**
      * 收集用户信息
@@ -107,6 +111,8 @@ class ActivityController extends Controller
         $temp = $this->cut_price->findCut_price_tempOne(['id'=>$parm['temp_id']]);
         $temp['info'] =json_decode($temp['info'],true);
         $parm['now_price'] = $temp['info']['old_price'];
+        $parm['created_at'] = date('Y-m-d H:i:s',time());
+        $parm['temp_id'] = isset($parm['temp_id']) && intval($parm['temp_id'])?intval($parm['temp_id']):'';
         $res = $this->cut_price->storeCut_price_collect($parm);
         return redirect('/activity/show/'.$parm['temp_id'].'/'.$res);
         //查询需要预览的模版
@@ -124,7 +130,6 @@ class ActivityController extends Controller
         //检查是不是已经到最低价了
         $cut_price_collect_info = $this->cut_price->findCut_price_collectOne(['id'=>$parm['collect_id']]);
         $cut_price_collect_temp = $this->cut_price->findCut_price_tempOne(['id'=>$parm['temp_id']]);
-
         $cut_price_collect_temp['info'] =json_decode($cut_price_collect_temp['info'],true);
         if ($cut_price_collect_temp['info']['bottom_price']==$cut_price_collect_temp->now_price) {
             return  response()->json(['status' => false, 'message' => '当前价格已经是底价了，不能再砍价了！']);
@@ -132,10 +137,10 @@ class ActivityController extends Controller
         //先检查是不是已经砍过了
         $openid = Cookie::get('openid');
         if ($openid) {
-            $isCut = $this->cut_price->findCut_price_logOne(['openid'=>$openid]);
-            if ($isCut || $openid) {
-                return  response()->json(['status' => false, 'message' => '您已经砍过价了，不能再砍了！']);
-            }
+            // $isCut = $this->cut_price->findCut_price_logOne(['openid'=>$openid]);
+            // if ($isCut || $openid) {
+            //     return  response()->json(['status' => false, 'message' => '您已经砍过价了，不能再砍了！']);
+            // }
             return  response()->json(['status' => false, 'message' => '您已经砍过价了，不能再砍了！']);
         }        
         
