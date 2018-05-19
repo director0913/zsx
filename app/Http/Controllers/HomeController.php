@@ -25,4 +25,41 @@ class HomeController extends Controller
     {
         return view('home');
     }
+    # 用户点击微信登录按钮后，调用此方法请求微信接口
+    public function oauth(Request $request)
+    {
+        return \Socialite::with('weixin')->redirect();
+    }
+
+    # 微信的回调地址
+    public function callback(Request $request)
+    {
+        $oauthUser = \Socialite::with('weixin')->user();
+
+        // 在这里可以获取到用户在微信的资料
+        dd($oauthUser);
+
+        // 接下来处理相关的业务逻
+    }
+    public function tokenSignature(request $request)
+    {
+       //1.将timestamp,nonce,token按字典序排序
+        $timestamp = $_GET['timestamp'];
+        $nonce     = $_GET['nonce'];
+        $token     = 'weixin';
+        $signature = $_get['signature'];
+        $array[] = $timestamp;
+        $array[] = $nonce;
+        $array[] = $token;
+        //$array     = [$timestamp,$nonce,$token];
+        sort($array);
+        //2.将排序后的三个参数拼接之后用sha1加密
+        $tmpstr = implode('',$array);//join
+        $tmpstr = sha1($tmpstr);
+        //3.将加密后的字符串与signature进行对比，判断该请求是否来自微信
+        if($tmpstr == $signature){
+           echo $_GET['echostr'];
+           exit;
+        }
+    }
 }

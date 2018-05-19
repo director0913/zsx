@@ -65,9 +65,9 @@ class Cut_price_collectRepositoryEloquent extends BaseRepository
      * @date   2016-11-02T15:17:24+0800
      * @return [type]     findCut_priceAll                      [查询结果集，包含查询的数量及查询的结果对象]
      */
-    public function findAll()
+    public function findAll($parm)
     {
-        return $this->model->get();
+        return $this->model->where($parm)->get();
     }
     /**
      * 查询角色并分页
@@ -104,5 +104,14 @@ class Cut_price_collectRepositoryEloquent extends BaseRepository
     public function del($where)
     {
         return $this->model->where($where)->delete();
+    }
+        /**
+     * 统计总报名人数
+     * @author 王浩
+      res   数字  
+     */
+    public function sumCollect()
+    {
+        return $this->model->count();
     }
 }

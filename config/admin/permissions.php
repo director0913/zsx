@@ -50,9 +50,11 @@ return [
 		'destroy' 	=> 'activity.destroy',
 		'show' 		=> 'activity.show',
 		'edit' 	=> 'activity.edit',
-		'filter' 	=> 'activity.filter',
 		'create' 	=> 'activity.create',
+		'toSign' 	=> 'activity.toSign',
 		'downexcel' 	=> 'activity.downexcel',
+		'tosign' 	=> 'activity.tosign',
+		'preview' 	=> 'activity.preview',
 	],
 	'music' => [
 		'list' 		=> 'music.list',

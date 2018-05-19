@@ -17,7 +17,7 @@ use Excel;
 class Cut_priceService extends BaseService
 {
 	use ActionButtonAttributeTrait;
-	private $action;
+	private $action = 'activity';
 	function __construct(Cut_priceRepositoryEloquent $cut_price,Cut_price_tempRepositoryEloquent $cut_price_temp,Cut_price_logRepositoryEloquent $cut_price_log,Cut_price_collectRepositoryEloquent $cut_price_collect)
 	{
 		$this->cut_price =  $cut_price;
@@ -31,25 +31,21 @@ class Cut_priceService extends BaseService
 	 * @date  2018-04-29
 	 * @return [type]                   [description]
 	 */
-	public function ajaxCutLists($where=[],$action='form')
+	public function ajaxCutLists($where=[],$p=1)
 	{
 		// datatables请求次数
 		$draw = request('id', 1);
 		//var_dump($request->id);die;
-		// 开始条数
-		$start = request('start', 0);
 		// 每页显示数目
-		$length = request('length', 10);
-		// datatables是否启用模糊搜索
-		#$search['regex'] = request('search.regex', false);
-		// 搜索框中的值
+		$length = 10;
+		// 开始条数
+		$start = intval(intval($p)-1)*$length;
 		$search = $where;
 		// 排序
+
 		$order['name'] = request('columns.' .request('order.0.column',0) . '.name','id');
 		$order['dir'] = request('order.0.dir','asc');
 		$result = $this->cut_price_temp->getCut_price_tempList($start,$length,$search,$order);
-		
-		$this->action = $action;
 		if ($result['roles']) {
 			foreach ($result['roles'] as $k=>$v) {
 				$this->id = $v->id;
@@ -65,13 +61,21 @@ class Cut_priceService extends BaseService
 				}
 			}
 		}
-		//var_dump($result['roles']->toArray());die;
-	//	return $result;
+		//获取访问量
+		$viewsCount = $this->cut_price_temp->sumViews();
+		//获取总的报名人数
+		$collectCount = $this->cut_price_collect->sumCollect();
+		//获取总的报名人数
+		$tempCount = $this->cut_price_temp->sumTemp();
 		return [
 			'draw' => $draw,
 			'recordsTotal' => $result['count'],
 			'recordsFiltered' => $result['count'],
 			'data' => $result['roles'],
+			'views' => $viewsCount,
+			'collectCount' => $collectCount,
+			'tempCount' => $tempCount,
+			'length' => ceil($result['count']/$length),
 		];
 	}
 	/**
@@ -92,7 +96,14 @@ class Cut_priceService extends BaseService
 	 */
 	public function getTotalLists($formData)
 	{
-		return $this->cut_price_collect->findAll(['temo_id'=>$formData['id']]);
+		return  $this->cut_price_collect->findAll(['temp_id'=>$formData['id']]);
+		// if ($result) {
+		// 	foreach ($result as $k=>$v) {
+		// 		$this->id = $v->id;
+		// 		$result[$k]['action'] = $this->getActionButtonAttribute(true);
+		// 	}
+		// }
+		// return $result;
 		
 	}
 	/**
@@ -293,16 +304,37 @@ class Cut_priceService extends BaseService
 	 * @param  [type]                   $id [用户ID]
 	 * @return [type]                       [Boolean]
 	 */
-	public function destroyTemplates($id)
+	public function destroyCut_price_temp($id)
 	{
 		try {
 			$where['id'] = $id;
-			$result = $this->templates->delete($where);
-			flash_info($result,trans('删除模版成功！'),trans('删除模版失败！'));
+			$result = $this->cut_price_temp->del($where);
+			flash_info($result,trans('删除活动成功！'),trans('删除活动失败！'));
 			return $result;
 		} catch (Exception $e) {
 			// 错误信息发送邮件
-			$this->sendSystemErrorMail(env('MAIL_SYSTEMERROR',''),$e);
+			//$this->sendSystemErrorMail(env('MAIL_SYSTEMERROR',''),$e);
+			return false;
+		}
+		
+	}
+		/**
+	 * 直接删除报名用户
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @param  [type]                   $id [用户ID]
+	 * @return [type]                       [Boolean]
+	 */
+	public function destroyCut_price_collect($id)
+	{
+		try {
+			$where['id'] = $id;
+			$result = $this->cut_price_collect->del($where);
+			flash_info($result,trans('删除报名用户成功！'),trans('删除报名用户失败！'));
+			return $result;
+		} catch (Exception $e) {
+			// 错误信息发送邮件
+			//$this->sendSystemErrorMail(env('MAIL_SYSTEMERROR',''),$e);
 			return false;
 		}
 		
@@ -335,8 +367,51 @@ class Cut_priceService extends BaseService
 		$data['xinxi3'] = $form['xinxi3'];
 		$parm['info'] = json_encode($data);
 		$parm['now_price'] = $form['now_price'];
+		$parm['temp_id'] = $form['temp_id'];
 		//var_dump($parm);di
 		return $this->cut_price_collect->store($parm);
+		
+	}
+			/**
+	 * 核销
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @param  [type]                   $id [用户ID]
+	 * @return [type]                       [Boolean]
+	 */
+	public function tosignCut_price_collect($id)
+	{
+		try {
+			$where['id'] = $id;
+			$result = $this->cut_price_collect->edit(['is_sign'=>1],$where);
+			flash_info($result,trans('核销成功！'),trans('核销失败！'));
+			return $result;
+		} catch (Exception $e) {
+			// 错误信息发送邮件
+			//$this->sendSystemErrorMail(env('MAIL_SYSTEMERROR',''),$e);
+			return false;
+		}
+		
+	}
+				/**
+	 *撤销核销
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @param  [type]                   $id [用户ID]
+	 * @return [type]                       [Boolean]
+	 */
+	public function roolbacksignCut_price_collect($id)
+	{
+		try {
+			$where['id'] = $id;
+			$result = $this->cut_price_collect->edit(['is_sign'=>2],$where);
+			flash_info($result,trans('撤销核销成功！'),trans('撤销核销失败！'));
+			return $result;
+		} catch (Exception $e) {
+			// 错误信息发送邮件
+			//$this->sendSystemErrorMail(env('MAIL_SYSTEMERROR',''),$e);
+			return false;
+		}
 		
 	}
 	/**
@@ -349,35 +424,37 @@ class Cut_priceService extends BaseService
 	public function downexcel($id)
 	{
 
-		$where['templates_id'] = $id;
-        $answer = $this->Templates_answer->findAll($where);
-        $where_template['id'] = $id;
-        $question = $this->templates->findOne($where_template);
-        $new_answer = [];
-        $callData = [];
-        if ($question->count()) {
-        	$question = $question->toArray();
-        	$question['content_text'] = json_decode($question['content_text'],true);
-        	if ($question['content_text']) {
-        		foreach ($question['content_text'] as $k => $v) {
-        			$new_question[$k] = $v['biaoti_title'];
+        $res = $this->cut_price_collect->findAll(['temp_id'=>$id]);
+        $temp = $this->cut_price_temp->findOne(['id'=>$id]);
+        $callData[] = ['序号','手机号码','姓名','当前价格','状态','完成时间','核销','报名时间'];
+       // var_dump($res->toArray());die;
+        if ($res) {
+        	foreach ($res as $k => $v) {
+        		$parm = [];
+        		$res[$k]['info'] = json_decode($v->info,true);
+        		$parm[] = $v['id'];
+        		$parm[] = $v['phone'];
+        		
+        		//var_dump($parm);die;
+        		if ($res[$k]['info']) {
+        			foreach ($res[$k]['info'] as $k1 => $v1) {
+        				if ($k1=='name') {
+        					$parm[] = $v1;
+        				}
+        				
+        			}
         		}
-        		$callData[] = $new_question;
+        		$parm[] = $v['now_price'];
+        		$parm[] = $v['is_success']==1?'已完成':'未完成';
+        		$parm[] = $v['is_success']==1?$v['finish_at']:'未完成';
+        		$parm[] = $v['is_sign']==1?'已核销':'未核销';
+        		$parm[] = $v->created_at;
+        		//var_dump($parm);die;
+        		$callData[] = $parm;
         	}
         }
-        
-        if ($answer->count()) {
-        	$answer = $answer->toArray();
-        	if ($answer) {
-        		//去除多余许答案
-        		foreach ($answer as $k => $v) {
-        			$callData[] = array_slice($v,2,count($new_question));
-        		}
-        	}
-        }
-
         ob_end_clean();
-        Excel::create($question['title'],function($excel) use ($callData){
+        Excel::create($temp->title.'活动报名表',function($excel) use ($callData){
             $excel->sheet('score', function($sheet) use ($callData){
                 $sheet->rows($callData);
             });

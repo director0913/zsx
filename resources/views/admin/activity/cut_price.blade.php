@@ -138,15 +138,15 @@
 					<div class="list-right">
 						
 							<div class="checkbox-wrap">
-									<p><input type="checkbox" value="guangpan" name="choose" id="guangpan">
+									<p><input type="checkbox" value="1" name="choose1" id="guangpan">
 									<label for="guangpan">必填项</label></p>
-									<p><input type="checkbox" value="kaiche" name="choose" id="kaiche">
+									<p><input type="checkbox" value="1" name="choose2" id="kaiche">
 									<label for="kaiche">必填项</label></p>
-									<p><input type="checkbox" value="laiji" name="choose" id="laiji">
+									<p><input type="checkbox" value="1" name="choose3" id="laiji">
 									<label for="laiji">必填项</label></p>
-									<p><input type="checkbox" value="baozhuang" name="choose" id="baozhuang">
+									<p><input type="checkbox" value="1" name="choose4" id="baozhuang">
 									<label for="baozhuang">必填项</label></p>
-									<p><input type="checkbox" value="bao" name="choose" id="bao">
+									<p><input type="checkbox" value="1" name="choose5" id="bao">
 									<label for="bao">必填项</label></p>
 							</div>
 					

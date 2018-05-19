@@ -11,10 +11,6 @@
 |
 */
 
-Route::get('/', function () {
-	return redirect('/admin/dash');
-});
-
 
 Auth::routes();
 
@@ -53,3 +49,11 @@ Route::post('activity/collect', 'ActivityController@collect');
 Route::post('activity/ajaxCut_priceButton', 'ActivityController@ajaxCut_priceButton');
 //检测是否可以参加活动
 Route::post('activity/ajaxJoinButton', 'ActivityController@ajaxJoinButton');
+
+
+# 用户点击登录按钮时请求的地址
+Route::get('/oauth', 'HomeController@oauth');
+
+# 微信接口回调地址
+Route::get('/callback', 'HomeController@callback');
+Route::get('/tokenSignature', 'HomeController@tokenSignature');

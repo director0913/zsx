@@ -26,6 +26,23 @@ trait ActionButtonAttributeTrait
 		return '';
 	}
 	/**
+	 * 活动预览
+	 * @author 王浩
+	 * @date   2018-05-19
+	 * @param  boolean	
+	 * @return [type]
+	 */
+	public function getPreviewActionButton($type = true)
+	{
+		//开启预览按钮
+		if (auth()->user()->can(config('admin.permissions.'.$this->action.'.preview'))) {
+			if ($type) {
+				return '<a href="javascript:;" class="btn btn-xs btn-outline btn-info tooltips"  data-original-title="' . trans('admin/action.actionButton.preview') . '"  data-placement="top"><i class="fa">预览</i></a> ';
+			}
+		}
+		return '';
+	}
+	/**
 	 * 修改按钮
 	 * @author 晚黎
 	 * @date   2016-10-31T18:13:50+0800
@@ -88,7 +105,8 @@ trait ActionButtonAttributeTrait
 	 */
 	public function getActionButtonAttribute($showType = true)
 	{
-		return $this->getShowActionButton($showType).
+		return $this->getPreviewActionButton($showType).
+				$this->getShowActionButton($showType).
 				$this->getResetActionButton().
 				$this->getEditActionButton().
 				$this->getDestroyActionButton().

@@ -14,6 +14,8 @@
         "hieu-le/active": "^3.3",
         "arcanedev/log-viewer": "^4.0",
         "maatwebsite/excel": "*",
+        "laravel/socialite": "*",
+        "socialiteproviders/weixin": "2.1.1",
         "simplesoftwareio/simple-qrcode": "1.3.*"
     },
     "require-dev": {

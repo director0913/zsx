@@ -51,10 +51,17 @@
                   <td>{{$v['info']['name']}}</td>
                   <td>{{$v['phone']}}</td>
                   <td>{{$v['now_price']}}</td>
-                  <td>{{$v['isSign']==1?'已完成':'已完成'}}</td>
-                  <td>{{$v['isSign']==1?'已核销':'未核销'}}</td>
+                  <td>{{$v['is_success']==1?'已完成':'未完成'}}</td>
+                  <td>{{$v['is_success']==1?$v['finish_at']:'未完成'}}</td>
+                  <td>{{$v['is_sign']==1?'已核销':'未核销'}}</td>
                   <td>{{$v['created_at']}}</td>
-                  <td>{!! $v['action'] !!}</td>
+                  <td>
+                    @if($v['is_sign']==1)
+                    <a href="javascript:;" onclick="return false" class="btn btn-xs btn-outline btn-danger tooltips tosign" data-original-title="撤销核销" data-placement="top"><i class="fa ">撤销核销</i><form action="{{url('/admin/activity/roolbacksign/'.$v['id'])}}" method="POST" name="delete_item" style="display:none"><input type="hidden" name="_method" value="delete"><input type="hidden" name="_token" value="<?php echo csrf_token(); ?>"></form></a>
+                    @else
+                    <a href="javascript:;" onclick="return false" class="btn btn-xs btn-outline btn-danger tooltips tosign" data-original-title="核销" data-placement="top"><i class="fa ">核销</i><form action="{{url('/admin/activity/tosign/'.$v['id'])}}" method="POST" name="delete_item" style="display:none"><input type="hidden" name="_method" value="delete"><input type="hidden" name="_token" value="<?php echo csrf_token(); ?>"></form></a>
+                    @endif
+                    <a href="javascript:;" onclick="return false" class="btn btn-xs btn-outline btn-danger tooltips destroy_item" data-original-title="删除" data-placement="top"><i class="fa fa-trash"></i><form action="{{url('/admin/activity/totalDel/'.$v['id'])}}" method="POST" name="delete_item" style="display:none"><input type="hidden" name="_method" value="delete"><input type="hidden" name="_token" value="<?php echo csrf_token(); ?>"></form></a></td>
                 </tr>
                 @endforeach
 		          </tbody>
@@ -81,20 +88,17 @@
       layer.close(index);
     });
   });
-  $(document).on('click','.reset_password',function() {
-    var item = $(this);
-    layer.confirm('{{trans('admin/alert.reset_password').config('admin.global.reset')}}', {
-      btn: ['{{trans('admin/action.actionButton.reset')}}','{{trans('admin/action.actionButton.no')}}'] //按钮
-    }, function(){
-      var _id = item.attr('data-id');
-      $.ajax({
-        url:'/admin/user/'+_id+'/reset',
-        success:function (response) {
-          layer.msg(response.msg);
-          layer.close(index);
-        }
-      });
+  $(document).on('click','.tosign',function() {
+    var _item = $(this);
+    var cont = $(this).find('.fa').html()
+    layer.confirm('确定要'+cont+'？', {
+      btn: ['确定', '取消'],
+      icon: 5,
+    },function(index){
+      _item.children('form').submit();
+      layer.close(index);
     });
   });
+
 </script>
 @endsection

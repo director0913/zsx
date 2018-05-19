@@ -38,11 +38,11 @@ class Cut_price_tempRepositoryEloquent extends BaseRepository
         //         $role = $role->where('name', $search['value'])->orWhere('slug', $search['value']);
         //     }
         // }
-        $count = $role->count();
+        $count = $role->join('cut_price', 'cut_price_temp.cut_price_id', '=', 'cut_price.id')->where($search)->count();
 
         //$role = $role->orderBy($order['name'], $order['dir']);
 
-        $roles = $role->join('cut_price', 'cut_price_temp.cut_price_id', '=', 'cut_price.id')->offset($start)->limit($length)->select('cut_price_temp.*','cut_price.title as typename')->get();
+        $roles = $role->join('cut_price', 'cut_price_temp.cut_price_id', '=', 'cut_price.id')->where($search)->offset($start)->limit($length)->select('cut_price_temp.*','cut_price.title as typename')->get();
 
         return compact('count','roles');
     }
@@ -105,5 +105,23 @@ class Cut_price_tempRepositoryEloquent extends BaseRepository
     public function del($where)
     {
         return $this->model->where($where)->delete();
+    }
+    /**
+     * 统计访问量
+     * @author 王浩
+      res   数字  
+     */
+    public function sumViews()
+    {
+        return $this->model->sum('views');
+    }
+     /**
+     * 统计总的活动数目
+     * @author 王浩
+      res   数字  
+     */
+    public function sumTemp()
+    {
+        return $this->model->count();
     }
 }

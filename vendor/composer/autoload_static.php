@@ -10,6 +10,9 @@ class ComposerStaticInit0f72578f1f1428bd2c505a018eabaeec
         '0e6d7bf4a5811bfa5cf40c5ccd6fae6a' => __DIR__ . '/..' . '/symfony/polyfill-mbstring/bootstrap.php',
         '667aeda72477189d0494fecd327c3641' => __DIR__ . '/..' . '/symfony/var-dumper/Resources/functions/dump.php',
         '1d1b89d124cc9cb8219922c9d5569199' => __DIR__ . '/..' . '/hamcrest/hamcrest-php/hamcrest/Hamcrest.php',
+        'c964ee0ededf28c96ebd9db5099ef910' => __DIR__ . '/..' . '/guzzlehttp/promises/src/functions_include.php',
+        'a0edc8309cc5e1d60e3047b5df6b7052' => __DIR__ . '/..' . '/guzzlehttp/psr7/src/functions_include.php',
+        '37a3dc5111fe8f707ab4c132ef1dbc62' => __DIR__ . '/..' . '/guzzlehttp/guzzle/src/functions_include.php',
         '5255c38a0faeba867671b61dfda6d864' => __DIR__ . '/..' . '/paragonie/random_compat/lib/random.php',
         '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
         'bd9634f2d41831496de0d3dfe4c94881' => __DIR__ . '/..' . '/symfony/polyfill-php56/bootstrap.php',
@@ -62,6 +65,9 @@ class ComposerStaticInit0f72578f1f1428bd2c505a018eabaeec
             'Symfony\\Component\\CssSelector\\' => 30,
             'Symfony\\Component\\Console\\' => 26,
             'SuperClosure\\' => 13,
+            'SocialiteProviders\\Weixin\\' => 26,
+            'SocialiteProviders\\Manager\\Test\\' => 32,
+            'SocialiteProviders\\Manager\\' => 27,
         ),
         'R' => 
         array (
@@ -71,6 +77,7 @@ class ComposerStaticInit0f72578f1f1428bd2c505a018eabaeec
         array (
             'Psy\\' => 4,
             'Psr\\Log\\' => 8,
+            'Psr\\Http\\Message\\' => 17,
             'Prettus\\Validator\\' => 18,
             'Prettus\\Repository\\' => 19,
             'Predis\\' => 7,
@@ -82,7 +89,9 @@ class ComposerStaticInit0f72578f1f1428bd2c505a018eabaeec
         ),
         'L' => 
         array (
+            'League\\OAuth1\\' => 14,
             'League\\Flysystem\\' => 17,
+            'Laravel\\Socialite\\' => 18,
         ),
         'I' => 
         array (
@@ -95,6 +104,9 @@ class ComposerStaticInit0f72578f1f1428bd2c505a018eabaeec
         ),
         'G' => 
         array (
+            'GuzzleHttp\\Psr7\\' => 16,
+            'GuzzleHttp\\Promise\\' => 19,
+            'GuzzleHttp\\' => 11,
             'GeniusTS\\Roles\\' => 15,
         ),
         'F' => 
@@ -207,6 +219,18 @@ class ComposerStaticInit0f72578f1f1428bd2c505a018eabaeec
         array (
             0 => __DIR__ . '/..' . '/jeremeamia/SuperClosure/src',
         ),
+        'SocialiteProviders\\Weixin\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/socialiteproviders/weixin/src',
+        ),
+        'SocialiteProviders\\Manager\\Test\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/socialiteproviders/manager/tests',
+        ),
+        'SocialiteProviders\\Manager\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/socialiteproviders/manager/src',
+        ),
         'Ramsey\\Uuid\\' => 
         array (
             0 => __DIR__ . '/..' . '/ramsey/uuid/src',
@@ -218,6 +242,10 @@ class ComposerStaticInit0f72578f1f1428bd2c505a018eabaeec
         'Psr\\Log\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/log/Psr/Log',
+        ),
+        'Psr\\Http\\Message\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-message/src',
         ),
         'Prettus\\Validator\\' => 
         array (
@@ -239,9 +267,17 @@ class ComposerStaticInit0f72578f1f1428bd2c505a018eabaeec
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
         ),
+        'League\\OAuth1\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/league/oauth1-client/src',
+        ),
         'League\\Flysystem\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/flysystem/src',
+        ),
+        'Laravel\\Socialite\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laravel/socialite/src',
         ),
         'Illuminate\\' => 
         array (
@@ -254,6 +290,18 @@ class ComposerStaticInit0f72578f1f1428bd2c505a018eabaeec
         'HieuLe\\ActiveTest\\' => 
         array (
             0 => __DIR__ . '/..' . '/hieu-le/active/tests',
+        ),
+        'GuzzleHttp\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/psr7/src',
+        ),
+        'GuzzleHttp\\Promise\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/promises/src',
+        ),
+        'GuzzleHttp\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
         'GeniusTS\\Roles\\' => 
         array (

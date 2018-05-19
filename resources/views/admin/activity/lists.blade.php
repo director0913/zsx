@@ -6,19 +6,11 @@
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-lg-10">
     <h2>微活动列表</h2>
-    <ol class="breadcrumb">
-        <li>
-            <a href="{{url('admin/dash')}}">{!!trans('admin/breadcrumb.home')!!}</a>
-        </li>
-        <li class="active">
-            <strong>{!!trans('admin/breadcrumb.user.list')!!}</strong>
-        </li>
-    </ol>
   </div>
   @permission(config('admin.permissions.activity.create'))
   <div class="col-lg-2">
     <div class="title-action">
-      <a href="{{url('admin/activity/create')}}" class="btn btn-info">{!!trans('admin/activity.action.create')!!}</a>
+      <a href="{{url('admin/activity/create')}}" class="btn btn-info">创建活动</a>
     </div>
   </div>
   @endpermission
@@ -29,7 +21,7 @@
       <div class="ibox float-e-margins">
         <div class="ibox-title">
 
-          活动总数：123     总浏览量：1232     报名总数：1111111
+          活动总数：{{$responseData['tempCount']}}    总浏览量：{{$responseData['views']}}      报名总数：{{$responseData['collectCount']}}
           <div class="ibox-tools">
             <a class="collapse-link">
               <i class="fa fa-chevron-up"></i>
@@ -66,11 +58,24 @@
                   <td><a href="{{url('/admin/activity/total/'.$v['id'])}}">统计详情</a></td>
                   <td>{!! $v['created_at'] !!}</td>
                   <td>{!! $v['action'] !!}</td>
+                  <td>{!! QrCode::size(200)->generate(url('/activity/show/'.$v['id'])) !!} </td>
                 </tr>
                 @endforeach
 		          </tbody>
 	          </table>
           </div>
+        </div>
+        <div class="dataTables_paginate paging_full_numbers" id="DataTables_Table_0_paginate">
+          <ul class="pagination">
+            @if($responseData['length']>1)
+              <li class="paginate_button first" id="DataTables_Table_0_first"><a href="{{url('/admin/activity/lists/1')}}" aria-controls="DataTables_Table_0" data-dt-idx="0" tabindex="0">首页</a></li>
+              <li class="paginate_button previous" id="DataTables_Table_0_previous"><a href="{{url('/admin/activity/lists/'.($p-1==0?1:$p-1))}}" aria-controls="DataTables_Table_0" data-dt-idx="1" tabindex="0">上页</a></li>
+              @for($i=1;$i-1<$responseData['length'];$i++)
+                <li class="paginate_button @if($p==$i) active @endif"><a href="{{url('/admin/activity/lists/'.$i)}}" aria-controls="DataTables_Table_0" data-dt-idx="2" tabindex="0">{{$i}}</a></li>
+              @endfor
+              <li class="paginate_button next" id="DataTables_Table_0_next"><a href="{{url('/admin/activity/lists/'.($p+1<=$responseData['length']?$p+1:$responseData['length']))}}" aria-controls="DataTables_Table_0" data-dt-idx="7" tabindex="0">下页</a></li><li class="paginate_button last" id="DataTables_Table_0_last"><a href="{{url('/admin/activity/lists/'.$responseData['length'])}}" aria-controls="DataTables_Table_0" data-dt-idx="8" tabindex="0">末页</a></li>
+            @endif
+          </ul>
         </div>
       </div>
   	</div>
@@ -107,5 +112,13 @@
       });
     });
   });
+  //获取二维码
+  $('.tooltips').mouseover(function(){
+   
+  })
+  $('.tooltips').mouseout(function(){
+    
+  })
+    
 </script>
 @endsection

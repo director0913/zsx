@@ -20,15 +20,15 @@ class ActivityController extends Controller
      * @date   2018-04-29
      * @return [type]                   [description]
      */
-    public function lists(Request $request,$id='')
+    public function lists(Request $request,$p=1)
     {
     	$where = [];
         //微活动条件
-        $where['typeid'] = 2;
-        $responseData = $this->cut_price->ajaxCutLists($where);
+        //$where['typeid'] = 2;
+        $responseData = $this->cut_price->ajaxCutLists($where,$p);
         //var_dump($responseData);die;
         // $templates_typeLists = $this->templates_typeService->findTypeAll();
-        return view('admin.activity.lists')->with(compact('responseData'));
+        return view('admin.activity.lists')->with(compact('responseData'))->with(compact('p'));
     }
 
     public function ajaxIndex()
@@ -66,33 +66,6 @@ class ActivityController extends Controller
         }
         return view('admin.activity.total')->with(compact('info'));
     }
-    /**
-     *微活动列表
-     * @author 王浩
-     * @date   2018-04-29
-     * @param  FormRequest              $request [description]
-     * @return [type]                            [description]
-     */
-    public function store($request)
-    {	
-    	$formData = $request->all();
-    	$formData['typeid'] = 2;
-        $this->user->storeUser($formData);
-        return redirect('admin.form.lists');
-    }
-     /**
-     * 收集答案
-     * @author 王浩
-     * @date   2018-04-29
-     * @param  FormRequest              $request [description]
-     * @return [type]                            [description]
-     */
-    public function answer(request $request)
-    {
-        $this->cut_price->storeAnswer($request);
-        return redirect('admin.form.lists');
-    }
-
 
     /**
      * 查看用户信息
@@ -110,57 +83,6 @@ class ActivityController extends Controller
         return view('admin.templates.preview')->with(compact('typeInfo'))->with(compact('info'));
     }
     /**
-     * 查看用户信息
-     * @author 王浩
-     * @date   2018-04-29
-     * @param  [type]                   $id [description]
-     * @return [type]                       [description]
-     */
-    public function custom($id)
-    {
-        $info = $this->cut_price->findPreviewById($id);
-        $typeInfo = $this->templates_question_type->findTypeAll();
-        $info['content_text'] =json_decode($info['content_text'],true);
-       // var_dump(($info['content_text']));die;
-        return view('admin.templates.custom')->with(compact('typeInfo'))->with(compact('info'));
-    }
-
-    /**
-     * 修改用户视图
-     * @author 王浩
-     * @date   2018-04-29
-     * @param  [type]                   $id [description]
-     * @return [type]                       [description]
-     */
-    public function edit(Request $request,$id)
-    {
-        if($request->isMethod('post')){
-            $this->cut_price->editTemplates($request);
-        }
-        $info = $this->cut_price->findPreviewById($id);
-        $typeInfo = $this->templates_question_type->findTypeAll();
-        $info['content_text'] = json_decode($info['content_text'],true);
-        $templates_typeLists = $this->templates_typeService->findTypeAll();
-       // var_dump($info['content_text']);die;
-        return view('admin.templates.edit')->with(compact('typeInfo'))->with(compact('info'))->with(compact('templates_typeLists'));
-        
-    }
-
-    /**
-     * 修改用户
-     * @author 王浩
-     * @date   2018-04-29
-     * @param  FormRequest              $request [description]
-     * @param  [type]                   $id      [description]
-     * @return [type]                            [description]
-     */
-    public function update(FormRequest $request, $id)
-    {
-        $this->user->updateUser($request->all(),$id);
-        return redirect('admin/user');
-    }
-
-    /**
      * 删除用户
      * @author 王浩
      * @date   2018-04-29
@@ -169,20 +91,53 @@ class ActivityController extends Controller
      */
     public function destroy($id)
     {
-        $this->cut_price->destroyTemplates($id);
-        return redirect('admin/form/lists');
+        $this->cut_price->destroyCut_price_temp($id);
+        return redirect('admin/activity/lists');
     }
-
     /**
-     * 重置用户密码
+     * 删除报名用户
      * @author 王浩
      * @date   2018-04-29
      * @param  [type]                   $id [description]
      * @return [type]                       [description]
      */
-    public function resetPassword($id)
+    public function totalDel($id)
     {
-        $responseData = $this->user->resetUserPassword($id);
-        return response()->json($responseData);
+        $this->cut_price->destroyCut_price_collect($id);
+        return redirect(url()->previous());
+    }
+    /**
+     * 核销
+     * @author 王浩
+     * @date   2018-04-29
+     * @param  [type]                   $id [description]
+     * @return [type]                       [description]
+     */
+    public function tosign($id)
+    {
+        $this->cut_price->tosignCut_price_collect($id);
+        return redirect(url()->previous());
+    }
+    /**
+     * 撤销核销
+     * @author 王浩
+     * @date   2018-04-29
+     * @param  [type]                   $id [description]
+     * @return [type]                       [description]
+     */
+    public function roolbacksign($id)
+    {
+        $this->cut_price->roolbacksignCut_price_collect($id);
+        return redirect(url()->previous());
+    }
+    /**
+     * 下载excel
+     * @author 王浩
+     * @date   2018-04-29
+     * @param  [type]                   $id [description]
+     */
+    public function downexcel($id)
+    {
+        $this->cut_price->downexcel($id);
     }
 }

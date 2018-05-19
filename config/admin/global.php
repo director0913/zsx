@@ -48,7 +48,7 @@ return [
 	//微活动
 	'activity' => [
 		// 控制是否显示查看按钮
-		'show' => true,
+		'show' => false,
 	],
 	//背景音乐
 	'music' => [
