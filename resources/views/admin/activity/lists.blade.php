@@ -58,7 +58,7 @@
                   <td><a href="{{url('/admin/activity/total/'.$v['id'])}}">统计详情</a></td>
                   <td>{!! $v['created_at'] !!}</td>
                   <td>{!! $v['action'] !!}</td>
-                  <td>{!! QrCode::size(200)->generate(url('/activity/show/'.$v['id'])) !!} </td>
+                  <td>{!! QrCode::size(100)->generate(url('/activity/show/'.$v['id'])) !!} </td>
                 </tr>
                 @endforeach
 		          </tbody>

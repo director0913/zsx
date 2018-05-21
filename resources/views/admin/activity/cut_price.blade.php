@@ -7,6 +7,9 @@
     <script src="{{asset('vendors/jquery/jquery-2.1.1.js')}}" type="text/javascript" charset="utf-8"></script>
     <script src="{{asset('vendors/jquery/cut_price.js')}}" type="text/javascript" charset="utf-8"></script>
     <link rel="stylesheet" type="text/css" href="{{asset('vendors/css/cut_price.css')}}"/>
+    <script src="{{asset('vendors/jquery/ajaxfileupload.js')}}" type="text/javascript" charset="utf-8"></script>
+    <script src="{{asset('vendors/jquery/small-exif.js')}}" type="text/javascript" charset="utf-8"></script>
+    <script src="{{asset('vendors/jquery/index.js')}}" type="text/javascript" charset="utf-8"></script>
 </head>
 <style>
 	.music-logo {
@@ -37,7 +40,13 @@
 		<p class="time">
 			<span>活动时间：</span><input type="date" name="start_at"/>到<input type="date" name="end_at"/>
 		</p>
-		<div class="price">
+		<div class="lunbo">
+            <div class="lunboBox" id="lunboBox">
+                <img src="{{asset('vendors/images/d2.png')}}" alt="">
+                <img src="{{asset('vendors/images/d2.png')}}" alt="">
+            </div>
+        </div>
+		<div class="price upIn">
 			<p class='i_p i_p1'><span>原价：</span><input type="text" value="100" name="old_price" />元<span style="margin-left:1rem;">底价：</span><input type="text" value="20" name="bottom_price"/>元</p>
 			<p class="text">每次减价减少范围</p>
 			<p class='i_p'><span>减少：</span><input type="text" value="1" name="min_price" />元<span style="margin-left:1rem;">最多：</span><input type="text" value="11" name="max_price"/>元</p>
@@ -51,17 +60,40 @@
 			<textarea class="text" name="jiangpin_info">少儿班6课时，一个月课程，新老学生均可参加此活动，原价300元 ，最低可减至2元。
 			</textarea>
 			<div class="add_">
-				<div class="add_but">
-					<input type="file" name="jiangpin_photo[]" style="opacity: 0; width: 100%; height: 100%;">
-				</div>
+                <div id="plusImg01" class="plusImg">
+                    <div>
+                        <img id="files_img1" src="" alt="">
+                        <input type="file" class="files" name="jiangpin_photo[]" id="files1" >
+                    </div>
+                    <div>
+                        <img id="files_img2" src="" alt="">
+                        <input type="file" class="files" name="jiangpin_photo[]" id="files2" >
+                    </div>
+                    <div>
+                        <img id="files_img3" src="" alt="">
+                        <input type="file" class="files" name="jiangpin_photo[]" id="files3" >
+                    </div>
+                    <div>
+                        <img id="files_img4" src="" alt="">
+                        <input type="file" class="files" name="jiangpin_photo[]" id="files4" >
+                    </div>
+                    <div>
+                        <img id="files_img5" src="" alt="">
+                        <input type="file" class="files" name="jiangpin_photo[]" id="files5" >
+                    </div>
+
+                </div>
 				<p>(请上传5张奖品图片，不上传则不显示)</p>
 			</div>
 		</div>
 		<div class="h_d">
 			<div class="bj">
-				<div class="bj_text">
-					活动规则
-				</div>
+				 <div class="img_ani yaohuang">
+                    <!--<img class="paizi" src="img/icon1-1.png" alt="">-->
+                    <div class="bj_text">
+                        活动规则
+                    </div>
+                </div>
 			</div>
 			<textarea class="text" name="rule_info">少儿班6课时，一个月课程，新老学生均可参加此活动，原价300元 ，最低可减至2元。</textarea>
 			<!-- <div class="h_but">
@@ -72,10 +104,15 @@
 		</div>
 		<div class="l_j">
 			<div class="bj">
-				<div class="bj_text">
-					领奖信息 
-				</div>
-			</div>
+                <div class="img_ani yaohuang">
+                    <!--<img class="paizi" src="img/icon1-1.png" alt="">-->
+                    <div class="bj_text">
+                        领奖信息
+                    </div>
+                </div>
+
+            </div>
+	
 			<textarea class="text" name="lingjiang_info">少儿班6课时，一个月课程，新老学生均可参加此活动，原价300元 ，最低可减至2元。</textarea>
 			<!-- <div class="h_but">
 				<div class="b_1">添加文字</div>
@@ -85,10 +122,14 @@
 		</div>
 		<div class="l_j">
 			<div class="bj">
-				<div class="bj_text">
-					机构介绍
-				</div>
-			</div>
+                <div class="img_ani yaohuang">
+                    <!--<img class="paizi" src="img/icon1-1.png" alt="">-->
+                    <div class="bj_text">
+                        机构介绍
+                    </div>
+                </div>
+
+            </div>
 			<textarea class="text" name="jigou_info">少儿班6课时，一个月课程，新老学生均可参加此活动，原价300元 ，最低可减至2元。</textarea>
 			<!-- <div class="h_but">
 				<div class="b_1">添加文字</div>
@@ -96,12 +137,16 @@
 				<div class="b_3">添加视频</div>
 			</div> -->
 		</div>
-		<div class="add_user">
+		<div class="l_j">
 			<div class="bj">
-				<div class="bj_text">
-					信息收集
-				</div>
-			</div>
+                <div class="img_ani yaohuang">
+                    <!--<img class="paizi" src="img/icon1-1.png" alt="">-->
+                    <div class="bj_text">
+                        信息收集
+                    </div>
+                </div>
+
+            </div>
 			<div class="user_1">
 				<h3>门店</h3>
 				<p class="p1"><input type="text" name="store_name" placeholder="请输入门店名称"/></p>
@@ -113,12 +158,16 @@
 			<!-- <div class="a_t">+点击添加门店</div> -->
 		</div>
 		<!-- 信息收集 -->
-		<div class="add_info">
+		<div class="l_j">
 			<div class="bj">
-				<div class="bj_text">
-					信息收集
-				</div>
-			</div>
+                <div class="img_ani yaohuang">
+                    <!--<img class="paizi" src="img/icon1-1.png" alt="">-->
+                    <div class="bj_text">
+                        信息收集
+                    </div>
+                </div>
+
+            </div>
 				<div class="info-title">
 					<ul>
 						<li>自定义项为空则不显示,最多可填6个字</li>
@@ -136,7 +185,6 @@
 						</ul>
 					</div>
 					<div class="list-right">
-						
 							<div class="checkbox-wrap">
 									<p><input type="checkbox" value="1" name="choose1" id="guangpan">
 									<label for="guangpan">必填项</label></p>
@@ -203,6 +251,7 @@
 		var store_name = $('[name="store_name"]').val();
 		var store_addr = $('[name="store_addr"]').val();
 		var store_phone = $('[name="store_phone"]').val();
+		var phone = $('[name="phone"]').val();
 		var title = $('[name="title"]').val();
 		if (!store_name) {
 			alert("请填写门店名称！")

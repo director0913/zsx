@@ -136,7 +136,7 @@ class Cut_priceService extends BaseService
 	 */
 	public function store($formData,$request)
 	{
-		// var_dump($formData);die;
+		
 		$parm['title'] = $formData['title']?$formData['title']:'';
 		//间隔时间
 		$form['interval'] = isset($formData['interval']) && intval($formData['interval'])?intval($formData['interval']):'';
@@ -162,6 +162,7 @@ class Cut_priceService extends BaseService
 		$form['xinxi2'] = $formData['xinxi2'];
 		$form['xinxi3'] = $formData['xinxi3'];
 		if (isset($formData['jiangpin_photo']) && $formData['jiangpin_photo']) {
+			$files = [];
 			foreach ($formData['jiangpin_photo'] as $k => $v) {
 			  	// 判断图片上传中是否出错
 				   // if (!$value->isValid()) {
@@ -174,8 +175,14 @@ class Cut_priceService extends BaseService
 					// }
 					$path = $v->store(date('Ymd'));
 	            	$files[] = '/uploads/'.$path;
-	            	$form['jiangpin_photo'] = $files;
 			    }
+			}
+			$form['jiangpin_photo'] = $files;
+		}
+		//可选必选
+		for ($i=1; $i < 6; $i++) { 
+			if (isset($formData['choose'.$i]) && $formData['choose'.$i]==1) {
+				$form['choose'.$i] = 1;
 			}
 		}
 		$parm['created_at'] = date('Y-m-d H:i:s',time());
@@ -368,6 +375,7 @@ class Cut_priceService extends BaseService
 		$parm['info'] = json_encode($data);
 		$parm['now_price'] = $form['now_price'];
 		$parm['temp_id'] = $form['temp_id'];
+		$parm['created_at'] = $form['created_at'];
 		//var_dump($parm);di
 		return $this->cut_price_collect->store($parm);
 		

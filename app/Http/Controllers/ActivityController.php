@@ -246,7 +246,7 @@ class ActivityController extends Controller
         $info['info'] =json_decode($info['info'],true);
         //查询需要预览的模版
         $preview = $this->cut_price->findCut_priceOne(['id'=>$info->cut_price_id]);
-       // var_dump(($info['content_text']));die;
+      //  var_dump(($preview));die;
         //浏览量加1
         $this->cut_price->editCut_price_temp(['views'=>$info->views+1],['id'=>$id]);
         //获取排行榜

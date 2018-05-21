@@ -63,12 +63,19 @@
 	<div class="warp">
 		<audio loop autoplay="autoplay" src = "{{asset('vendors/css/bg.mp3')}}"></audio>
 		<div class="music-logo" id="music-logo"></div>
-		<div class="head">
+		<img class="class_d1 suofang" src="{{asset('vendors/images/d1.png')}}" alt="">
+		<div class="head leftIn">
 			{{isset($info['title'])?$info['title']:''}}
 		</div>
-		<p class="time">
+		<p class="time rightIn">
 			<span>活动时间：</span><input type="text" disabled="disabled" value="{{$info['info']['start_at']}}"/>到<input type="text" disabled="disabled"  value="{{$info['info']['end_at']}}" />
 		</p>
+		<div class="lunbo">
+            <div class="lunboBox" id="lunboBox">
+                <img src="{{asset('vendors/images/d2.png')}}" alt="">
+                <img src="{{asset('vendors/images/d2.png')}}" alt="">
+            </div>
+        </div>
 		<!-- <div class="price">
 			<p class='i_p i_p1'><span>原价：</span><input type="text" disabled="disabled"  value="{{$info['info']['old_price']}}" />元<span style="margin-left:1rem;">底价：</span><input  disabled="disabled"  type="text" value="{{$info['info']['bottom_price']}}" />元</p>
 			<p class="text">每次减价减少范围</p>
@@ -91,8 +98,10 @@
 		</div>
 		<div class="h_d">
 			<div class="bj">
-				<div class="bj_text">
-					活动规则
+				<div class="img_ani yaohuang">
+					<div class="bj_text">
+						活动规则
+					</div>
 				</div>
 			</div>
 			<p class="text">{{$info['info']['rule_info']}}</p>
@@ -100,10 +109,12 @@
 				<img src="{{asset('vendors/images/icon1.png')}}"/>
 			</div> -->
 		</div>
-		<div class="l_j">
+		<div class="h_d">
 			<div class="bj">
-				<div class="bj_text">
-					领奖信息 
+				<div class="img_ani yaohuang">
+					<div class="bj_text">
+						领奖信息
+					</div>
 				</div>
 			</div>
 			<p class="text">{{$info['info']['lingjiang_info']}}</p>
@@ -111,10 +122,12 @@
 				<img src="{{asset('vendors/images/icon1.png')}}"/>
 			</div> -->
 		</div>
-		<div class="j_g">
+		<div class="h_d">
 			<div class="bj">
-				<div class="bj_text">
-					机构介绍
+				<div class="img_ani yaohuang">
+					<div class="bj_text">
+						机构介绍
+					</div>
 				</div>
 			</div>
 			<p class="text">{{$info['info']['jigou_info']}}</p>
@@ -122,10 +135,12 @@
 				
 			</div>
 		</div>
-		<div class="add_user">
+		<div class="h_d">
 			<div class="bj">
-				<div class="bj_text">
-					信息收集
+				<div class="img_ani yaohuang">
+					<div class="bj_text">
+						信息收集
+					</div>
 				</div>
 			</div>
 			<div class="user_1">
@@ -181,10 +196,12 @@
 	       
 		</div>
 		<!-- 排行榜 -->
-		<div class="add_info">
+		<div class="h_d">
 			<div class="bj">
-				<div class="bj_text">
-					排行榜
+				<div class="img_ani yaohuang">
+					<div class="bj_text">
+						排行榜
+					</div>
 				</div>
 			</div>
 				<div class="ranking">
@@ -259,6 +276,7 @@
 			
 		})
 	@endif
+
 	//检测是否可以参加
 	$('.c_j').click(function(){
 		$.ajax({
@@ -313,7 +331,34 @@
 			$('[name="phone"]').val('')
 			return false
 		}
-		
+		@if(isset($info['info']['choose1']) && $info['info']['choose1']==1)
+			var name = $('[name="name"]').val();
+			if (!name) {
+				alert("请填写{{$info['info']['name']}}！")
+				return false;
+			}
+		@endif
+		@if(isset($info['info']['choose3']) && $info['info']['choose3']==1)
+			var xinxi1 = $('[name="xinxi1"]').val();
+			if (!xinxi1) {
+				alert("请填写{{$info['info']['xinxi1']}}！")
+				return false;
+			}
+		@endif
+		@if(isset($info['info']['choose4']) && $info['info']['choose4']==1)
+			var xinxi2 = $('[name="xinxi2"]').val();
+			if (!xinxi2) {
+				alert("请填写{{$info['info']['xinxi2']}}！")
+				return false;
+			}
+		@endif
+		@if(isset($info['info']['choose5']) && $info['info']['choose5']==1)
+			var xinxi3 = $('[name="xinxi3"]').val();
+			if (!xinxi3) {
+				alert("请填写{{$info['info']['xinxi3']}}！")
+				return false;
+			}
+		@endif			
 	}
 </script>
 </html>
