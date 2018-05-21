@@ -31,23 +31,18 @@ class TemplatesService extends BaseService
 	 * @date  2018-04-29
 	 * @return [type]                   [description]
 	 */
-	public function ajaxLists($where=[],$action='form')
+	public function ajaxLists($where=[],$action='form',$p)
 	{
+		// datatables请求次数
 		// datatables请求次数
 		$draw = request('id', 1);
 		//var_dump($request->id);die;
-		// 开始条数
-		$start = request('start', 0);
 		// 每页显示数目
-		$length = request('length', 10);
-		// datatables是否启用模糊搜索
-		#$search['regex'] = request('search.regex', false);
-		// 搜索框中的值
+		$length = 10;
+		// 开始条数
+		$start = intval(intval($p)-1)*$length;
 		$search = $where;
-		// 排序
-		$order['name'] = request('columns.' .request('order.0.column',0) . '.name','id');
-		$order['dir'] = request('order.0.dir','asc');
-		$result = $this->templates->getTemplatesList($start,$length,$search,$order);
+		$result = $this->templates->getTemplatesList($start,$length,$search,$order=[]);
 		// /var_dump($result['roles']);die;
 		$this->action = $action;
 		if ($result['roles']) {
@@ -57,12 +52,12 @@ class TemplatesService extends BaseService
 				$result['roles'][$k]['action'] = $this->getActionButtonAttribute(true);
 			}
 		}
-	//	return $result;
 		return [
 			'draw' => $draw,
 			'recordsTotal' => $result['count'],
 			'recordsFiltered' => $result['count'],
 			'data' => $result['roles'],
+			'length' => ceil($result['count']/$length),
 		];
 	}
 	/**

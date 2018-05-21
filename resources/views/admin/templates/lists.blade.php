@@ -31,7 +31,7 @@
           <a href="{{url('/admin/form/lists/')}}"><span>所有模版</span></a>
           @if($templates_typeLists)
             @foreach($templates_typeLists as $k =>$v)
-              <a href="{{url('/admin/form/lists/'.$v['id'])}}"><span>{{$v->name}}</span></a>
+              <a href="{{url('/admin/form/lists/1/'.$v['id'])}}"><span>{{$v->name}}</span></a>
             @endforeach
           @endif
           <div class="ibox-tools">
@@ -72,6 +72,18 @@
 		          </tbody>
 	          </table>
           </div>
+        </div>
+        <div class="dataTables_paginate paging_full_numbers" id="DataTables_Table_0_paginate">
+          <ul class="pagination">
+            @if($responseData['length']>1)
+              <li class="paginate_button first" id="DataTables_Table_0_first"><a href="{{url('/admin/form/lists/1/'.$id)}}" aria-controls="DataTables_Table_0" data-dt-idx="0" tabindex="0">首页</a></li>
+              <li class="paginate_button previous" id="DataTables_Table_0_previous"><a href="{{url('/admin/form/lists/'.($p-1==0?1:$p-1).'/'.$id)}}" aria-controls="DataTables_Table_0" data-dt-idx="1" tabindex="0">上页</a></li>
+              @for($i=1;$i-1<$responseData['length'];$i++)
+                <li class="paginate_button @if($p==$i) active @endif"><a href="{{url('/admin/form/lists/'.$i.'/'.$id)}}" aria-controls="DataTables_Table_0" data-dt-idx="2" tabindex="0">{{$i}}</a></li>
+              @endfor
+              <li class="paginate_button next" id="DataTables_Table_0_next"><a href="{{url('/admin/form/lists/'.($p+1<=$responseData['length']?$p+1:$responseData['length']).'/'.$id)}}" aria-controls="DataTables_Table_0" data-dt-idx="7" tabindex="0">下页</a></li><li class="paginate_button last" id="DataTables_Table_0_last"><a href="{{url('/admin/form/lists/'.$responseData['length'].'/'.$id)}}" aria-controls="DataTables_Table_0" data-dt-idx="8" tabindex="0">末页</a></li>
+            @endif
+          </ul>
         </div>
       </div>
   	</div>

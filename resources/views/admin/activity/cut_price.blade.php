@@ -251,8 +251,18 @@
 		var store_name = $('[name="store_name"]').val();
 		var store_addr = $('[name="store_addr"]').val();
 		var store_phone = $('[name="store_phone"]').val();
+		var start_at = $('[name="start_at"]').val();
+		var end_at = $('[name="end_at"]').val();
 		var phone = $('[name="phone"]').val();
 		var title = $('[name="title"]').val();
+		if (!start_at) {
+			alert("活动开始时间必须选择！")
+			return false;
+		}
+		if (!end_at) {
+			alert("活动结束时间必须选择！")
+			return false;
+		}
 		if (!store_name) {
 			alert("请填写门店名称！")
 			return false;

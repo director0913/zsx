@@ -29,7 +29,7 @@ class FormController extends Controller
      * @date   2018-04-29
      * @return [type]                   [description]
      */
-    public function lists(Request $request,$id='')
+    public function lists(Request $request,$p=1,$id='')
     {
     	$where = [];
         if (intval($id)) {
@@ -37,10 +37,10 @@ class FormController extends Controller
         }
         //微表单条件
         $where['typeid'] = 1;
-        $responseData = $this->templates->ajaxLists($where,$action='form');
+        $responseData = $this->templates->ajaxLists($where,$action='form',$p);
         //var_dump($responseData);die;
         $templates_typeLists = $this->templates_typeService->findTypeAll();
-        return view('admin.templates.lists')->with(compact('responseData'))->with(compact('templates_typeLists'));
+        return view('admin.templates.lists')->with(compact('responseData'))->with(compact('templates_typeLists'))->with(compact('p'))->with(compact('id'));
     }
 
     public function ajaxIndex()

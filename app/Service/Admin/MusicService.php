@@ -27,19 +27,12 @@ class MusicService extends BaseService
 	 * @date  2018-04-29
 	 * @return [type]                   [description]
 	 */
-	public function ajaxLists($where=[])
+	public function ajaxLists($search=[],$p=1)
 	{
-		// datatables请求次数
-		$draw = 1;
-		//var_dump($request->id);die;
-		// 开始条数
-		$start = 0;
 		// 每页显示数目
 		$length = 10;
-		// datatables是否启用模糊搜索
-		#$search['regex'] = request('search.regex', false);
-		// 搜索框中的值
-		$search = $where;
+		// 开始条数
+		$start = intval(intval($p)-1)*$length;
 		$result = $this->music->getMusicList($start,$length,$search);
 		//var_dump($result['roles']);die;
 		if ($result['roles']) {
@@ -48,12 +41,11 @@ class MusicService extends BaseService
 				$result['roles'][$k]['action'] = $this->getActionButtonAttribute(true);
 			}
 		}
-	//	return $result;
 		return [
-			'draw' => $draw,
 			'recordsTotal' => $result['count'],
 			'recordsFiltered' => $result['count'],
 			'data' => $result['roles'],
+			'length' => ceil($result['count']/$length),
 		];
 	}
 	/**
@@ -77,21 +69,42 @@ class MusicService extends BaseService
 	{
 
 		$formData = $request->all();
-		$img1 = $request->file('src');
-	    if ($img1) { 
+		$file = $request->file('src');
+	    if ($file) { 
 	        //扩展名  
-	        $ext = $img1->getClientOriginalExtension();  
-	        //临时绝对路径  
-	        $realPath = $img1->getRealPath();  
-	        // 使用 store 存储文件
-	        $path = $img1->store(date('Ymd'));
-	        $parm['src'] = '/uploads/'.$path;
+	        //获取原文件名  
+            $originalName = $file->getClientOriginalName();  
+            //扩展名  
+            $ext = $file->getClientOriginalExtension();  
+            //文件类型  
+            $type = $file->getClientMimeType();  
+            //临时绝对路径  
+            $realPath = $file->getRealPath();  
+
+            $filename = date('Y-m-d-H-i-S').'-'.uniqid().'.'.$ext;  
+            Storage::disk('local')->makeDirectory(date('Ymd'));
+            Storage::disk('local')->put(date('Ymd').'/'.$filename, file_get_contents($realPath)); 
+	        $parm['src'] = '/uploads/'.date('Ymd').'/'.$filename;
 	    }
 	    $parm['name'] = $formData['name'];
 	    $parm['desc'] = $formData['desc'];
 	    $parm['created_at'] = date('Y-m-d H:i:s',time());
 		return $this->music->store($parm);
 	}
+
+
+			// $path = $img1->store(date('Ymd'));
+	  //       $dump_path = $path;
+	  //       $dump = explode('.',$dump_path);
+	  //       unset($dump[count($dump)-1]);
+	  //       $res = implode('.',$dump);
+	  //       Storage::move($path,$res.'.'.$ext);
+	  //       $parm['src'] = '/uploads/'.$res.'.'.$ext;
+
+
+
+
+
 	/**
 	 * 直接删除
 	 * @author 王浩

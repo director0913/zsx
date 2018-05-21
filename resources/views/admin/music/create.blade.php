@@ -63,7 +63,7 @@
             <div class="form-group{{ $errors->has('available_price_max') ? ' has-error' : '' }}">
               <label class="col-sm-2 control-label">上传音乐文件</label>
               <div class="col-sm-10">
-                <input type="file" class="form-control" name="src" value="{{old('src')}}" > 
+                <input type="file" class="form-control" name="src" value="{{old('src')}}" accept="audio/*" > 
                 @if ($errors->has('src'))
                 <span class="help-block m-b-none text-danger">{{ $errors->first('src') }}</span>
                 @endif

@@ -35,8 +35,6 @@ class TemplatesRepositoryEloquent extends BaseRepository
         }
 
         $count = $role->count();
-        $role = $role->orderBy($order['name'], $order['dir']);
-
         $roles = $role->offset($start)->limit($length)->get();
 
         return compact('count','roles');

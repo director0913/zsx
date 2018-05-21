@@ -35,8 +35,8 @@
 			          </tr>
 		          </thead>
 		          <tbody>
-                @if($info['data'])
-                  @foreach($info['data'] as $k => $v)
+                @if($responseData['data'])
+                  @foreach($responseData['data'] as $k => $v)
                   <tr role="row" class="odd">
                     <td class="sorting_1">{{$v['id']}}</td>
                     <td>{{$v['name']}}</td>
@@ -51,6 +51,18 @@
 	          </table>
           </div>
         </div>
+      </div>
+      <div class="dataTables_paginate paging_full_numbers" id="DataTables_Table_0_paginate">
+        <ul class="pagination">
+          @if($responseData['length']>1)
+            <li class="paginate_button first" id="DataTables_Table_0_first"><a href="{{url('/admin/music/lists/1')}}" aria-controls="DataTables_Table_0" data-dt-idx="0" tabindex="0">首页</a></li>
+            <li class="paginate_button previous" id="DataTables_Table_0_previous"><a href="{{url('/admin/music/lists/'.($p-1==0?1:$p-1))}}" aria-controls="DataTables_Table_0" data-dt-idx="1" tabindex="0">上页</a></li>
+            @for($i=1;$i-1<$responseData['length'];$i++)
+              <li class="paginate_button @if($p==$i) active @endif"><a href="{{url('/admin/music/lists/'.$i)}}" aria-controls="DataTables_Table_0" data-dt-idx="2" tabindex="0">{{$i}}</a></li>
+            @endfor
+            <li class="paginate_button next" id="DataTables_Table_0_next"><a href="{{url('/admin/music/lists/'.($p+1<=$responseData['length']?$p+1:$responseData['length']))}}" aria-controls="DataTables_Table_0" data-dt-idx="7" tabindex="0">下页</a></li><li class="paginate_button last" id="DataTables_Table_0_last"><a href="{{url('/admin/music/lists/'.$responseData['length'])}}" aria-controls="DataTables_Table_0" data-dt-idx="8" tabindex="0">末页</a></li>
+          @endif
+        </ul>
       </div>
   	</div>
   </div>

@@ -13,7 +13,9 @@
 
 
 Auth::routes();
-
+Route::get('/', function () {
+	return redirect('/admin/dash');
+});
 Route::get('/home', 'HomeController@index');
 
 Route::group(['prefix' => 'admin','namespace' => 'Admin','middleware' => ['auth']],function ($router)

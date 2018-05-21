@@ -21,13 +21,13 @@ class MusicController extends Controller
      * @date   2018-04-29
      * @return [type]                   [description]
      */
-    public function lists(Request $request)
+    public function lists(Request $request,$p=1)
     {
     	$where = [];
         //微表单条件
-        $info = $this->music->ajaxLists($where);
+        $responseData = $this->music->ajaxLists($where,$p);
         //var_dump($info);die;
-        return view('admin.music.lists')->with(compact('info'));
+        return view('admin.music.lists')->with(compact('responseData'))->with(compact('p'));
     }
 
     public function ajaxIndex()
@@ -71,7 +71,6 @@ class MusicController extends Controller
         $info = $this->music->findPreviewById($id);
         $typeInfo = $this->music_question_type->findTypeAll();
         $info['content_text'] =json_decode($info['content_text'],true);
-       // var_dump(($info['content_text']));die;
         return view('admin.music.preview')->with(compact('typeInfo'))->with(compact('info'));
     }
 

@@ -31,19 +31,12 @@ class MusicRepositoryEloquent extends BaseRepository
     public function getMusicList($start,$length,$search)
     {
         $role = $this->model;
-        // if ($search['value']) {
-        //     if($search['regex'] == 'true'){
-        //         $role = $role->where('name', 'like', "%{$search['value']}%")->orWhere('slug','like', "%{$search['value']}%");
-        //     }else{
-        //         $role = $role->where('name', $search['value'])->orWhere('slug', $search['value']);
-        //     }
-        // }
+        if ($search) {
+            $role = $role->where($search);
+        }
 
         $count = $role->count();
-        //$role = $role->orderBy($order['name'], $order['dir']);
-
         $roles = $role->offset($start)->limit($length)->get();
-
         return compact('count','roles');
     }
     /**
