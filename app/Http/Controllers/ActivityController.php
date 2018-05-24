@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Service\Admin\Cut_priceService;
 use Illuminate\Support\Facades\Cookie;
+use Session;
 class ActivityController extends Controller
 {
     private $form;
@@ -43,8 +44,11 @@ class ActivityController extends Controller
      */
     public function create(request $request,$id,$id1)
     {
+        //判断微信是否登录
+        if (!session('wx_login')) {
+            return redirect(url('/oauth'));
+        }
         $formData = $request->all();
-
         $cut_price_lists = $this->cut_price->findCut_priceOne(['id'=>$id]);
         return view('admin.activity.'.$cut_price_lists->tem_name)->with(compact('cut_price_lists'))->with(compact('id'))->with(compact('id1'));
     }
@@ -84,11 +88,23 @@ class ActivityController extends Controller
      */
     public function collect(request $request)
     {
+        //判断微信是否登录
+        // if (!session('wx_login')) {
+        //     return redirect(url('/oauth'));
+        // }
+        //return redirect()->back()->withInput()->withErrors('<script>alert(2)</script>');
         $parm = $request->all();
+        //查看是否已经报名
+        $isCollect = $this->cut_price->findCut_price_collectOne(['temp_id'=>$parm['temp_id'],'openid'=>session('openid')]);
+        if ($isCollect) {
+            echo "<script>alert('您已经参加过了，不能重复参加！');history.go(-1);</script>";die;
+        }
         $temp = $this->cut_price->findCut_price_tempOne(['id'=>$parm['temp_id']]);
         $temp['info'] =json_decode($temp['info'],true);
         $parm['now_price'] = $temp['info']['old_price'];
         $parm['created_at'] = date('Y-m-d H:i:s',time());
+        $parm['openid'] = session('wx_openid')?session('wx_openid'):'';
+        $parm['nickname'] = session('wx_nickname')?session('wx_nickname'):'';
         $parm['temp_id'] = isset($parm['temp_id']) && intval($parm['temp_id'])?intval($parm['temp_id']):'';
         $res = $this->cut_price->storeCut_price_collect($parm);
         return redirect('/activity/show/'.$parm['temp_id'].'/'.$res);
@@ -143,32 +159,35 @@ class ActivityController extends Controller
             return  response()->json(['status' => false, 'message' => '当前价格已经是底价了，不能再砍价了！']);
         }
         //先检查是不是已经砍过了
-        $openid = Cookie::get('openid');
-        if ($openid) {
-            // $isCut = $this->cut_price->findCut_price_logOne(['openid'=>$openid]);
-            // if ($isCut || $openid) {
-            //     return  response()->json(['status' => false, 'message' => '您已经砍过价了，不能再砍了！']);
-            // }
+        $isCut = $this->cut_price->findCut_price_logOne(['openid'=>session('wx_openid'),'cut_price_id'=>$parm['temp_id']]);
+        if ($isCut) {
+            if ($isCut->is_onwer==1) {//$cut_price_collect_temp['info']['interval']
+                if ((time()-strtotime($isCut->created_at)) <($cut_price_collect_temp['info']['interval']*3600)) {
+                   $cha = $cut_price_collect_temp['info']['interval']-ceil((time()-strtotime($isCut->created_at))/3600);
+                    return  response()->json(['status' => false, 'message' => '还差'.$cha.'个小时，可以继续砍价！']);
+                }
+            }
             return  response()->json(['status' => false, 'message' => '您已经砍过价了，不能再砍了！']);
-        }        
-        
+        }               
         //减价的金额计算
         if ($cut_price_collect_info->now_price-$cut_price_collect_temp['info']['bottom_price']<=$cut_price_collect_temp['info']['max_price']) {
             $cut = $cut_price_collect_info->now_price-$cut_price_collect_temp['info']['bottom_price'];
+            $log['finish_at'] = date('Y-m-d H:i:s',time());
+            $log['is_success'] = 1;
         }else{
             $cut = rand($cut_price_collect_temp['info']['min_price'],$cut_price_collect_temp['info']['max_price']);    
         }
-        $openid =   uniqid();
-        $log['openid'] = $openid;
+        $log['openid'] = session('wx_openid');
         $log['cut_price'] = $cut;
         $log['cut_price_id'] = $parm['temp_id'];
-        $log['is_onwer'] = 2;
+        $log['is_onwer'] = $cut_price_collect_info['openid']==$log['openid']?1:2;
+        $log['created_at'] = date('Y-m-d H:i:s',time());
         $res = $this->cut_price->storeCut_price_log($log); 
         //去收集表中减去砍价的金额 
         $collect['now_price'] = $cut_price_collect_info->now_price-$cut;
         $this->cut_price->updateCut_price_collect($collect,['id'=>$parm['collect_id']]);
         //设置cookie防止再次砍价
-        return  response()->json(['status' => true, 'message' => '成功砍价'.$cut.'元！'])->withCookie(Cookie::make('openid',$openid, 60*24*365));
+        return  response()->json(['status' => true, 'message' => '成功砍价'.$cut.'元！']);
         
     }
 
@@ -241,7 +260,10 @@ class ActivityController extends Controller
      */
     public function show($id,$collect_id='')
     {
-
+        //判断微信是否登录
+        if (!session('wx_login')) {
+            return redirect(url('/oauth'));
+        }
         $info = $this->cut_price->findCut_price_tempOne(['id'=>$id]);
         $info['info'] =json_decode($info['info'],true);
         //查询需要预览的模版

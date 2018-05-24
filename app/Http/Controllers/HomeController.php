@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Session;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -13,7 +13,7 @@ class HomeController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('auth');
+      //  $this->middleware('Wechat');
     }
 
     /**
@@ -28,6 +28,7 @@ class HomeController extends Controller
     # 用户点击微信登录按钮后，调用此方法请求微信接口
     public function oauth(Request $request)
     {
+        session(['oauth_url'=>$request->url()]);
         return \Socialite::with('weixin')->redirect();
     }
 
@@ -35,9 +36,15 @@ class HomeController extends Controller
     public function callback(Request $request)
     {
         $oauthUser = \Socialite::with('weixin')->user();
-
-        // 在这里可以获取到用户在微信的资料
-        dd($oauthUser);
+        if ($oauthUser) {
+            session(['wx_login'=>true]);
+            session(['wx_openid'=>$oauthUser->user['openid']]);
+            session(['wx_nickname'=>$oauthUser->user['nickname']]);
+            return redirect(session('oauth_url'));
+        }
+        // $openid = $oauthUser->user->openid;
+        // // 在这里可以获取到用户在微信的资料
+        // dd($oauthUser);
 
         // 接下来处理相关的业务逻
     }

@@ -11,6 +11,7 @@ use App\Traits\ActionButtonAttributeTrait;
 use Storage;
 use Exception;
 use Excel;
+use Session;
 /**
 * 角色service
 */
@@ -188,6 +189,7 @@ class Cut_priceService extends BaseService
 		$parm['created_at'] = date('Y-m-d H:i:s',time());
 		$parm['info'] = json_encode($form);
 		$parm['user_id'] = isset($formData['now_id']) && intval($formData['now_id'])?intval($formData['now_id']):'';
+		$parm['openid'] = session('wx_openid')?session('wx_openid'):'';
 		return $this->cut_price_temp->store($parm);
 	}
 	/**
@@ -218,7 +220,7 @@ class Cut_priceService extends BaseService
 		if ($role) {
 			return $role;
 		}
-		abort(404);
+		return '';
 	}
 	/**
 	 * 根据ID获取模版预览数据
@@ -263,7 +265,7 @@ class Cut_priceService extends BaseService
 		if ($role) {
 			return $role;
 		}
-		abort(404);
+		return '';
 	}
 	/**
 	 * 根据ID获取模版预览数据
@@ -376,6 +378,8 @@ class Cut_priceService extends BaseService
 		$parm['now_price'] = $form['now_price'];
 		$parm['temp_id'] = $form['temp_id'];
 		$parm['created_at'] = $form['created_at'];
+		$parm['openid'] = $form['openid'];
+		$parm['nickname'] = $form['nickname'];
 		//var_dump($parm);di
 		return $this->cut_price_collect->store($parm);
 		

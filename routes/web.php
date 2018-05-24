@@ -48,7 +48,7 @@ Route::any('activity/create/{id}/now/{id1}', 'ActivityController@create');
 Route::post('activity/store', 'ActivityController@store');
 Route::get('activity/show/{id}/{collect_id?}', 'ActivityController@show');
 Route::post('activity/collect', 'ActivityController@collect');
-Route::post('activity/ajaxCut_priceButton', 'ActivityController@ajaxCut_priceButton');
+Route::post('/activity/ajaxCut_priceButton', 'ActivityController@ajaxCut_priceButton');
 //检测是否可以参加活动
 Route::post('activity/ajaxJoinButton', 'ActivityController@ajaxJoinButton');
 
