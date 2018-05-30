@@ -46,6 +46,12 @@ Route::get('form/custom/{id}', 'FormController@custom');
 Route::post('form/answer/', 'FormController@answer');
 Route::any('activity/create/{id}/now/{id1}', 'ActivityController@create');
 Route::post('activity/store', 'ActivityController@store');
+//大转盘存储
+Route::post('luckly/store', 'LucklyController@store');
+Route::get('luckly/show/{id}/{collect_id?}', 'LucklyController@show');
+Route::post('luckly/collect', 'LucklyController@collect');
+Route::post('/luckly/ajaxCut_priceButton', 'LucklyController@ajaxCut_priceButton');
+
 Route::get('activity/show/{id}/{collect_id?}', 'ActivityController@show');
 Route::post('activity/collect', 'ActivityController@collect');
 Route::post('/activity/ajaxCut_priceButton', 'ActivityController@ajaxCut_priceButton');

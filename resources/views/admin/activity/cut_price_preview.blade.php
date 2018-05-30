@@ -238,11 +238,19 @@
 			<?php echo csrf_field(); ?>
 			<div class="list-left">
 				<ul>
-					<li><input type="text" name="name" placeholder="姓名"/></li>
-					<li><input type="text" name="phone"   placeholder="手机号码"/></li>
-					<li><input type="text" name="xinxi1" placeholder="信息项名称"/></li>
-					<li><input type="text" name="xinxi2" placeholder="信息项名称"/></li>
-					<li><input type="text" name="xinxi3" placeholder="信息项名称"/></li>
+					@if(isset($info['info']['choose1']) && $info['info']['choose1']==1)
+						<li><input type="text" name="name" placeholder="{{$info['info']['xinxi1']}}"/></li>
+					@endif
+						<li><input type="text" name="phone"   placeholder="手机号码"/></li>
+					@if(isset($info['info']['choose3']) && $info['info']['choose3']==1)
+						<li><input type="text" name="xinxi1" placeholder="{{$info['info']['xinxi1']}}"/></li>
+					@endif
+					@if(isset($info['info']['choose4']) && $info['info']['choose4']==1)
+						<li><input type="text" name="xinxi2" placeholder="{{$info['info']['xinxi2']}}"/></li>
+					@endif
+					@if(isset($info['info']['choose5']) && $info['info']['choose5']==1)
+						<li><input type="text" name="xinxi3" placeholder="{{$info['info']['xinxi3']}}"/></li>
+					@endif
 				</ul>
 			</div>
 			<div class="list-left">
