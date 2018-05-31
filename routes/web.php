@@ -65,3 +65,7 @@ Route::get('/oauth', 'HomeController@oauth');
 # 微信接口回调地址
 Route::get('/callback', 'HomeController@callback');
 Route::get('/tokenSignature', 'HomeController@tokenSignature');
+
+//抽奖按钮
+Route::post('/luckly/ajaxLucklyButton','LucklyController@ajaxLucklyButton');
+Route::resource('/luckly/{id}','LucklyController');

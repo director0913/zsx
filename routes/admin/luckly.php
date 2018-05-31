@@ -11,6 +11,7 @@ $router->group(['prefix' => 'luckly'],function ($router)
 	$router->any('tosign/{id}','LucklyController@tosign')->name('luckly.tosign');
 	$router->any('roolbacksign/{id}','LucklyController@roolbacksign')->name('luckly.roolbacksign');
 	$router->any('totalDel/{id}','LucklyController@totalDel')->name('luckly.totalDel');
-	$router->any('{id}/downexcel','LucklyController@downexcel')->name('luckly.downexcel');
+	$router->resource('{id}','LucklyController');
+	//Route::resource('/luckly/{id}','LucklyController');
 });
-$router->resource('luckly','LucklyController');
+$router->resource('luckly/{id}','LucklyController');

@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Cookie;
 use Session;
 class LucklyController extends Controller
 {
-    private $form;
+    private $luckly;
 
     function __construct(LucklyService $luckly)
     {
@@ -54,7 +54,7 @@ class LucklyController extends Controller
     }
 
     /**
-     *微活动列表
+     *大转盘
      * @author 王浩
      * @date   2018-04-29
      * @param  FormRequest              $request [description]
@@ -62,9 +62,8 @@ class LucklyController extends Controller
      */
     public function store(request $request)
     {	
-
-        $formData = $request->all();
-    	$res = $this->luckly->store($formData,$request);
+        $parm = $request->all();
+    	$res = $this->luckly->store($request);
         return redirect('/activity/show/'.$res);
     }
      /**
@@ -191,42 +190,5 @@ class LucklyController extends Controller
     {
         $this->cut_price->destroyTemplates($id);
         return redirect('admin/form/lists');
-    }
-
-    /**
-     * 重置用户密码
-     * @author 王浩
-     * @date   2018-04-29
-     * @param  [type]                   $id [description]
-     * @return [type]                       [description]
-     */
-    public function resetPassword($id)
-    {
-        $responseData = $this->user->resetUserPassword($id);
-        return response()->json($responseData);
-    }
-        /**
-     * 查看用户信息
-     * @author 王浩
-     * @date   2018-04-29
-     * @param  [type]                   $id [description]
-     * @return [type]                       [description]
-     */
-    public function show($id,$collect_id='')
-    {
-        //判断微信是否登录
-        if (!session('wx_login')) {
-            return redirect(url('/oauth'));
-        }
-        $info = $this->cut_price->findCut_price_tempOne(['id'=>$id]);
-        $info['info'] =json_decode($info['info'],true);
-        //查询需要预览的模版
-        $preview = $this->cut_price->findCut_priceOne(['id'=>$info->cut_price_id]);
-      //  var_dump(($preview));die;
-        //浏览量加1
-        $this->cut_price->editCut_price_temp(['views'=>$info->views+1],['id'=>$id]);
-        //获取排行榜
-        $rank = $this->cut_price->getCut_price_collectRank(['temp_id'=>$id]);
-        return view('admin.activity.'.$preview->tem_name.'_preview')->with(compact('info'))->with(compact('collect_id'))->with(compact('rank'));
     }
 }

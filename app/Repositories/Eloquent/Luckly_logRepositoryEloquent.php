@@ -49,7 +49,7 @@ class Luckly_logRepositoryEloquent extends BaseRepository
      */
     public function findAllCount($formData)
     {
-        return $this->model->where($formData)->count()->groupBy('openid');
+        return $this->model->where($formData)->distinct('openid')->count('openid');
     }
     /**
      * 查询

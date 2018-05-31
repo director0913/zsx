@@ -135,26 +135,27 @@ class LucklyService extends BaseService
 	 * @param  [type]                   $formData [表单中所有的数据]
 	 * @return [type]                             [Boolean]
 	 */
-	public function store($formData,$request)
+	public function store($request)
 	{
-		
+		$formData = $request->all();
 		$parm['title'] = $formData['title']?$formData['title']:'';
-		$form['cut_price_id'] = isset($formData['cut_price_id']) && intval($formData['cut_price_id'])?intval($formData['cut_price_id']):'';
+		$parm['cut_price_id'] = isset($formData['cut_price_id']) && intval($formData['cut_price_id'])?intval($formData['cut_price_id']):'';
 		$form['start_at'] = $formData['start_at'];
 		$form['end_at'] = $formData['end_at'];
 		//参与人数是否限制，不限制的话为0，限制的话为具体数目
+		$form['join_num_limit'] = intval($formData['join_num_limit'])?intval($formData['join_num_limit']):0;
 		$form['join_num'] = intval($formData['join_num'])?intval($formData['join_num']):0;
-		//参与人数是否显示，显示1，不显示2
-		$form['join_num_show'] = $formData['join_num_show']==1?1:2;
+		//参与人数是否显示，显示1，不显示0
+		$form['join_num_show'] = $formData['join_num_show']==1?1:0;
 		//虚拟人数
 		$form['join_num_xuni'] = intval($formData['join_num_xuni'])?intval($formData['join_num_xuni']):0;
 		//活动说明
-		$form['desc'] = $form['desc'];
+		$form['desc'] = isset($formData['desc']) && $formData['desc']?$formData['desc']:'';
 		//派奖方式
-		//总的抽奖机会,限制的话是1，不限制为2
-		$form['join_num_count'] = intval($formData['join_num_count'])?intval($formData['join_num_count']):2;
+		//总的抽奖机会,限制的话是1，不限制为0
+		$form['join_num_count'] = intval($formData['join_num_count'])?intval($formData['join_num_count']):0;
 		//总共的抽奖机会
-		$form['join_num_count_num'] = intval($formData['join_num_count_num'])?intval($formData['join_num_count_num']):0;
+		$form['join_num_count_num'] = isset($formData['join_num_count_num']) && intval($formData['join_num_count_num'])?intval($formData['join_num_count_num']):0;
 		//每日的抽奖机会
 		$form['join_num_count_num_day'] = intval($formData['join_num_count_num_day'])?intval($formData['join_num_count_num_day']):0;
 		//每人中奖次数
@@ -165,12 +166,8 @@ class LucklyService extends BaseService
 		//各个奖项设置
 		//奖项名称
 		$form['price_title'] = $formData['price_title'];
-		//奖项等级
-		$form['price_level'] = $formData['price_level'];
 		//奖品数量
 		$form['price_num'] = $formData['price_num'];
-		//操作提示
-		$form['price_prompt'] = $formData['price_prompt'];
 		//奖品有效期
 		$form['price_start_at'] = $formData['price_start_at'];
 		$form['price_end_at'] = $formData['price_end_at'];
@@ -351,41 +348,47 @@ class LucklyService extends BaseService
 		$parm = $request->all();
         //检查是不是还有抽奖次数
         $join_num = $this->luckly_log->findAllCount(['id'=>$parm['temp_id']]);
-        $cut_price_collect_temp = $this->cut_price->findCut_price_tempOne(['id'=>$parm['temp_id']]);
-        $cut_price_collect_temp['info'] =json_decode($cut_price_collect_temp['info'],true);
+        //获取模版信息
+        $cut_price_temp = $this->cut_price_temp->findOne(['id'=>$parm['temp_id']]);
+        $cut_price_temp['info'] =json_decode($cut_price_temp['info'],true);
         //参与人数是否限制
-        if ($join_num < $cut_price_collect_temp['info']['join_num']) {
+        if ($join_num < $cut_price_temp['info']['join_num']) {
         	//判断总共抽奖次数
         	$countNum = $this->luckly_log->countNum(['id'=>$parm['temp_id']]);
-        	if ($cut_price_collect_temp['info']['join_num_count_num'] > $countNum) {
+        	if ($cut_price_temp['info']['join_num_count_num'] > $countNum) {
         		return ['status'=>false,'message'=>'所有的抽奖次数已经用完！'];
         	}else{
         		$start_at = strtotime(date('Ymd'));
         		$end_at = strtotime(date('Ymd'))+86400;
-        		$countNum = $this->luckly_log->countNum(['id'=>$parm['temp_id'],('created_at','>=',$start_at),('created_at','<=',$end_at)]);
+        		// $countNum = $this->luckly_log->countNum(['id'=>$parm['temp_id'],('created_at','>=',$start_at),('created_at','<=',$end_at)]);
         		//今日抽奖次数
-        		if ($countNum >= $cut_price_collect_temp['info']['join_num_count_num_day']) {
+        		if ($countNum >= $cut_price_temp['info']['join_num_count_num_day']) {
         			return ['status'=>false,'message'=>'今日的抽奖次数已经用完！'];
         		}
         	}
         	
         }       
         //检查是不是开始砍价了
-        if (strtotime($cut_price_collect_temp['info']['start_at']) > time()) {
-        	return 	['status'=>false,'message'=>'活动尚未开始！']
+        if (strtotime($cut_price_temp['info']['start_at']) > time()) {
+        	return 	['status'=>false,'message'=>'活动尚未开始！'];
         }
-        if (strtotime($cut_price_collect_temp['info']['end_at']) < time()) {
-        	return 	['status'=>false,'message'=>'活动已经结束！']
+      //  var_dump($cut_price_temp['info']['price_num']);die;
+        if (strtotime($cut_price_temp['info']['end_at']) < time()) {
+        	return 	['status'=>false,'message'=>'活动已经结束！'];
         }             
-        $price = getLuckly($cut_price_collect_temp['info']['percent'],$cut_price_collect_temp['info']['price_level'],$$cut_price_collect_temp['info']['price_num']);
-        $log['openid'] = session('wx_openid');
+        $price = getLuckly($cut_price_temp['info']['winner_percent'],$cut_price_temp['info']['price_num'],$cut_price_temp['info']['price_num']);
+        $log['openid'] = session('wx_openid')?session('wx_openid'):'';
         $log['is_luckly'] = $price;
         $log['cut_price_id'] = $parm['temp_id'];
         $res = $this->luckly_log->store($log); 
         if ($price) {
-        	return ['status'=>true,'message'=>'恭喜，抽中'.$price.'等奖！'];
+        	return ['status'=>true,'message'=>'恭喜，抽中'.$price.'等奖！','luckly'=>$price];
         }else{
-        	return ['status'=>true,'message'=>'没有中奖，再接再厉吧！'];
+        	return ['status'=>false,'message'=>'没有中奖，再接再厉吧！'];
         }
+	}
+	//获取有多少人参加了
+	public function getJoin_num($parm){
+		return $this->luckly_log->findAllCount($parm);
 	}
 }

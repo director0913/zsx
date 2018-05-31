@@ -109,7 +109,7 @@ class Cut_price_tempRepositoryEloquent extends BaseRepository
     /**
      * 统计访问量
      * @author 王浩
-      res   数字  
+     * res   数字  
      */
     public function sumViews()
     {
@@ -118,7 +118,7 @@ class Cut_price_tempRepositoryEloquent extends BaseRepository
      /**
      * 统计总的活动数目
      * @author 王浩
-      res   数字  
+     * res   数字  
      */
     public function sumTemp()
     {

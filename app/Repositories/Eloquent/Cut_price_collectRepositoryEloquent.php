@@ -108,7 +108,7 @@ class Cut_price_collectRepositoryEloquent extends BaseRepository
         /**
      * 统计总报名人数
      * @author 王浩
-      res   数字  
+      *dsasdfres   数字  
      */
     public function sumCollect()
     {

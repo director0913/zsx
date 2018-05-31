@@ -25,19 +25,20 @@ if(!function_exists('getUerId')){
 	 * @date  2018-04-29
 	 * @percent  [type]            int    概率
 	 * @luckly  [type]             array   各个奖项的数组
-	 * @num  [type]                   总的人数
+	 * @level_num  [type]                   总的人数
 	 * @return [type]                  中奖，则是第几，不中，返回0
 	 */
 if(!function_exists('getLuckly')){
 	function getLuckly($percent,$level,$level_num)
 	{
 		//计算总的奖品数目
+		$allLevel = 0;
 		for ($i=1; $i <count($level)+1 ; $i++) { 
-			$allLevel += $level_num[$i]*$i;
+			$allLevel += $level_num[$i-1]*$i;
 		}
 		$rand = rand(1,(100/$percent)*$allLevel);
 		for ($i=1; $i <count($level)+1 ; $i++) { 
-			if (1 <= $rand && $rand <= $level_num[$i]*$i) {
+			if (1 <= $rand && $rand <= $level_num[$i-1]*$i) {
 				return $i;
 			}
 		}

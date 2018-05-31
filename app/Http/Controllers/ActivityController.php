@@ -3,15 +3,17 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Service\Admin\Cut_priceService;
+use App\Service\Admin\LucklyService;
 use Illuminate\Support\Facades\Cookie;
 use Session;
 class ActivityController extends Controller
 {
     private $form;
 
-    function __construct(Cut_priceService $cut_price)
+    function __construct(Cut_priceService $cut_price,LucklyService $LucklyService)
     {
         $this->cut_price = $cut_price;
+        $this->LucklyService = $LucklyService;
     }
 
     /**
@@ -268,7 +270,6 @@ class ActivityController extends Controller
         $info['info'] =json_decode($info['info'],true);
         //查询需要预览的模版
         $preview = $this->cut_price->findCut_priceOne(['id'=>$info->cut_price_id]);
-      //  var_dump(($preview));die;
         //浏览量加1
         $this->cut_price->editCut_price_temp(['views'=>$info->views+1],['id'=>$id]);
         //不同的模版返回不同的数据
@@ -277,7 +278,9 @@ class ActivityController extends Controller
             $rank = $this->cut_price->getCut_price_collectRank(['temp_id'=>$id]);
             return view('admin.activity.'.$preview->tem_name.'_preview')->with(compact('info'))->with(compact('collect_id'))->with(compact('rank'));
         }else{
-            return view('admin.activity.'.$preview->tem_name.'_preview')->with(compact('info'))->with(compact('collect_id'));
+            //获取总共多少人参与了
+            $joinNum = $this->LucklyService->getJoin_num(['cut_price_id'=>$info->id]);
+            return view('admin.activity.'.$preview->tem_name.'_preview')->with(compact('info'))->with(compact('collect_id'))->with(compact('joinNum'));
         }
     }
 }
