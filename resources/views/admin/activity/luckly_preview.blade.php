@@ -258,11 +258,13 @@
                 //angel = 旋转角度 + 720
                 wheelSurf.lottery( 720+360-(count * angel + angel / 2),function () {
                     if(winData.status){
-                        $('#todayCount').html(parseInt($('#todayCount').html())-1>0?parseInt($('#todayCount').html())-1:0)
-                        $('#useNum').html(parseInt($('#useNum').html())+1)
+                        $('#todayCount').html(Number($('#todayCount').html())-1>0?Number($('#todayCount').html())-1:0)
+                        $('#useNum').html(Number($('#useNum').html())+1)
                         $(".huo").show();
                         $(".text").html(winData.message);
                     }else{
+                        $('#todayCount').html(Number($('#todayCount').html())-1>0?Number($('#todayCount').html())-1:0)
+                        $('#useNum').html(Number($('#useNum').html())+1)
                         $('#res').html(winData.message)
                         $(".no_huo").show();
                     }
