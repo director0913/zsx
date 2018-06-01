@@ -27,87 +27,6 @@ class LucklyService extends BaseService
 		$this->luckly_log =  $luckly_log;
 	}
 	/**
-	 * datatables获取数据
-	 * @author 王浩
-	 * @date  2018-04-29
-	 * @return [type]                   [description]
-	 */
-	public function ajaxCutLists($where=[],$p=1)
-	{
-		// datatables请求次数
-		$draw = request('id', 1);
-		//var_dump($request->id);die;
-		// 每页显示数目
-		$length = 10;
-		// 开始条数
-		$start = intval(intval($p)-1)*$length;
-		$search = $where;
-		// 排序
-
-		$order['name'] = request('columns.' .request('order.0.column',0) . '.name','id');
-		$order['dir'] = request('order.0.dir','asc');
-		$result = $this->cut_price_temp->getCut_price_tempList($start,$length,$search,$order);
-		if ($result['roles']) {
-			foreach ($result['roles'] as $k=>$v) {
-				$this->id = $v->id;
-				//$result['roles'][$k]['actionButton'] = $this->getActionButtonAttribute(false);
-				$result['roles'][$k]['action'] = $this->getActionButtonAttribute(true);
-				$result['roles'][$k]['info'] = json_decode($v->info,true);
-				if (strtotime($result['roles'][$k]['info']['end_at'])<=time()) {
-					$result['roles'][$k]['status'] = '已结束！';
-				}elseif(strtotime($result['roles'][$k]['info']['end_at'])>time() && strtotime($result['roles'][$k]['info']['start_at'])>time()){
-					$result['roles'][$k]['status'] = '未开始！';
-				}elseif(strtotime($result['roles'][$k]['info']['end_at'])>time() && strtotime($result['roles'][$k]['info']['start_at'])<time()){
-					$result['roles'][$k]['status'] = '进行中！';
-				}
-			}
-		}
-		//获取访问量
-		$viewsCount = $this->cut_price_temp->sumViews();
-		//获取总的报名人数
-		$collectCount = $this->cut_price_collect->sumCollect();
-		//获取总的报名人数
-		$tempCount = $this->cut_price_temp->sumTemp();
-		return [
-			'draw' => $draw,
-			'recordsTotal' => $result['count'],
-			'recordsFiltered' => $result['count'],
-			'data' => $result['roles'],
-			'views' => $viewsCount,
-			'collectCount' => $collectCount,
-			'tempCount' => $tempCount,
-			'length' => ceil($result['count']/$length),
-		];
-	}
-	/**
-	 * 创建用户视图数据
-	 * @author 王浩
-	 * @date  2018-04-29
-	 * @return [type]                   [description]
-	 */
-	public function createView()
-	{
-		return [$this->getAllPermissionList(),$this->getAllRoles()];
-	}
-	/**
-	 * 统计详情
-	 * @author 王浩
-	 * @date  2018-04-29
-	 * @return [type]                   [description]
-	 */
-	public function getTotalLists($formData)
-	{
-		return  $this->cut_price_collect->findAll(['temp_id'=>$formData['id']]);
-		// if ($result) {
-		// 	foreach ($result as $k=>$v) {
-		// 		$this->id = $v->id;
-		// 		$result[$k]['action'] = $this->getActionButtonAttribute(true);
-		// 	}
-		// }
-		// return $result;
-		
-	}
-	/**
 	 * 获取所有权限并分组
 	 * @author 王浩
 	 * @date  2018-04-29
@@ -205,36 +124,6 @@ class LucklyService extends BaseService
 		$parm['user_id'] = isset($formData['now_id']) && intval($formData['now_id'])?intval($formData['now_id']):'';
 		$parm['openid'] = session('wx_openid')?session('wx_openid'):'';
 		return $this->cut_price_temp->store($parm);
-	}
-	/**
-	 * 根据ID获取模版预览数据
-	 * @author 王浩
-	 * @date  2018-04-29
-	 * @param  [type]                   $id [权限id]
-	 * @return [type]                       [查询出来的权限对象，查不到数据时跳转404]
-	 */
-	public function findCut_priceAll()
-	{
-		$role =  $this->cut_price->findAll();
-		if ($role) {
-			return $role;
-		}
-		abort(404);
-	}
-	/**
-	 * 获取抽奖次数
-	 * @author 王浩
-	 * @date  2018-04-29
-	 * @param  [type]                   array
-	 * @return [type]                       [查询出来的权限对象，查不到数据时跳转404]
-	 */
-	public function findLuckly_logAll($formData)
-	{
-		$role =  $this->cut_price_log->findAll($formData);
-		if ($role) {
-			return $role;
-		}
-		return '';
 	}
 	/**
 	 * 插入用户信息收集表
@@ -346,36 +235,46 @@ class LucklyService extends BaseService
 	//抽奖按钮
 	public function ajaxLucklyButtonCheck($request){
 		$parm = $request->all();
-        //检查是不是还有抽奖次数
-        $join_num = $this->luckly_log->findAllCount(['id'=>$parm['temp_id']]);
-        //获取模版信息
+		 //获取模版信息
+
         $cut_price_temp = $this->cut_price_temp->findOne(['id'=>$parm['temp_id']]);
         $cut_price_temp['info'] =json_decode($cut_price_temp['info'],true);
-        //参与人数是否限制
-        if ($join_num < $cut_price_temp['info']['join_num']) {
-        	//判断总共抽奖次数
-        	$countNum = $this->luckly_log->countNum(['id'=>$parm['temp_id']]);
-        	if ($cut_price_temp['info']['join_num_count_num'] > $countNum) {
-        		return ['status'=>false,'message'=>'所有的抽奖次数已经用完！'];
-        	}else{
-        		$start_at = strtotime(date('Ymd'));
-        		$end_at = strtotime(date('Ymd'))+86400;
-        		// $countNum = $this->luckly_log->countNum(['id'=>$parm['temp_id'],('created_at','>=',$start_at),('created_at','<=',$end_at)]);
-        		//今日抽奖次数
-        		if ($countNum >= $cut_price_temp['info']['join_num_count_num_day']) {
-        			return ['status'=>false,'message'=>'今日的抽奖次数已经用完！'];
-        		}
-        	}
-        	
-        }       
-        //检查是不是开始砍价了
+		 //检查是不是开始砍价了
         if (strtotime($cut_price_temp['info']['start_at']) > time()) {
         	return 	['status'=>false,'message'=>'活动尚未开始！'];
         }
       //  var_dump($cut_price_temp['info']['price_num']);die;
         if (strtotime($cut_price_temp['info']['end_at']) < time()) {
         	return 	['status'=>false,'message'=>'活动已经结束！'];
-        }             
+        }    
+
+        //检查是不是还有抽奖次数
+        $join_num = $this->luckly_log->findAllCount(['id'=>$parm['temp_id'],'openid'=>session('wx_openid')]);
+     //  var_dump(count($join_num));var_dump($cut_price_temp['info']['winner_num']);die;
+        //中奖次数超了之后
+        if ($cut_price_temp['info']['winner_num'] <= $join_num) {
+        	return ['status'=>false,'message'=>'没有中奖，再接再厉吧！'];
+        }
+        //参与人数是否限制
+        $getJoin_num = $this->getJoin_num(['cut_price_id'=>$parm['temp_id']]);
+
+        if (count($getJoin_num) >$cut_price_temp['info']['join_num']) {
+        	//判断总共抽奖次数
+        	$countNum = $this->luckly_log->countNum(['cut_price_id'=>$parm['temp_id'],'openid'=>session('wx_openid')]);
+        	if (!$cut_price_temp['info']['join_num_count']) {
+        		if ($cut_price_temp['info']['join_num_count_num'] <= $countNum) {
+	        		return ['status'=>false,'message'=>'所有的抽奖次数已经用完！'];
+	        	}
+        	}
+    		$countNum = $this->getTodayLeftOver(['cut_price_id'=>$parm['temp_id'],'openid'=>session('wx_openid')]);
+    		//今日抽奖次数
+    		if (count($countNum) >= $cut_price_temp['info']['join_num_count_num_day']) {
+    			return ['status'=>false,'message'=>'今日的抽奖次数已经用完！'];
+        	}
+        }else{
+        	return ['status'=>false,'message'=>'参与人数已经足够！'];
+        }     
+             
         $price = getLuckly($cut_price_temp['info']['winner_percent'],$cut_price_temp['info']['price_num'],$cut_price_temp['info']['price_num']);
         $log['openid'] = session('wx_openid')?session('wx_openid'):'';
         $log['is_luckly'] = $price;
@@ -391,4 +290,21 @@ class LucklyService extends BaseService
 	public function getJoin_num($parm){
 		return $this->luckly_log->findAllCount($parm);
 	}
+	//获取今天还有多少次数
+	public function getTodayLeftOver($parm){
+		$start_at = date('Y-m-d');
+		$end_at = date('Y-m-d',strtotime(date('Ymd'))+86400);
+		$parm[] = ['created_at','>',$start_at];
+		$parm[] = ['created_at','<',$end_at];
+		return $this->luckly_log->findAll($parm);
+	}
+	//获取使用次数
+	public function getUseNum($parm){
+		return $this->luckly_log->findAll($parm);
+	}
+	//获取我的奖品
+	public function getOwnPrice($parm){
+		return $this->luckly_log->findAll($parm);
+	}
+
 }

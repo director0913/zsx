@@ -28,7 +28,7 @@ class HomeController extends Controller
     # 用户点击微信登录按钮后，调用此方法请求微信接口
     public function oauth(Request $request)
     {
-        session(['oauth_url'=>$request->url()]);
+        session(['oauth_url'=>url()->previous()]);
         return \Socialite::with('weixin')->redirect();
     }
 

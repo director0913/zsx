@@ -79,7 +79,6 @@ class ActivityController extends Controller
         $info = $this->cut_price->findPreviewById($id);
         $typeInfo = $this->templates_question_type->findTypeAll();
         $info['content_text'] =json_decode($info['content_text'],true);
-       // var_dump(($info['content_text']));die;
         return view('admin.templates.preview')->with(compact('typeInfo'))->with(compact('info'));
     }
     /**

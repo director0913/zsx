@@ -47,9 +47,9 @@ class ActivityController extends Controller
     public function create(request $request,$id,$id1)
     {
         //判断微信是否登录
-        // if (!session('wx_login')) {
-        //     return redirect(url('/oauth'));
-        // }
+        if (!session('wx_login')) {
+            return redirect(url('/oauth'));
+        }
         $formData = $request->all();
         $cut_price_lists = $this->cut_price->findCut_priceOne(['id'=>$id]);
         return view('admin.activity.'.$cut_price_lists->tem_name)->with(compact('cut_price_lists'))->with(compact('id'))->with(compact('id1'));
@@ -263,9 +263,9 @@ class ActivityController extends Controller
     public function show($id,$collect_id='')
     {
         //判断微信是否登录
-        // if (!session('wx_login')) {
-        //     return redirect(url('/oauth'));
-        // }
+        if (!session('wx_login')) {
+            return redirect(url('/oauth'));
+        }
         $info = $this->cut_price->findCut_price_tempOne(['id'=>$id]);
         $info['info'] =json_decode($info['info'],true);
         //查询需要预览的模版
@@ -280,7 +280,20 @@ class ActivityController extends Controller
         }else{
             //获取总共多少人参与了
             $joinNum = $this->LucklyService->getJoin_num(['cut_price_id'=>$info->id]);
-            return view('admin.activity.'.$preview->tem_name.'_preview')->with(compact('info'))->with(compact('collect_id'))->with(compact('joinNum'));
+            //$getTodayLeftOver = $this->LucklyService->getTodayLeftOver(['cut_price_id'=>$info->id,'openid'=>session('openid')]);
+            //微信不登录用这个
+            //今日还剩几次getUseNum
+            $getTodayLeftOver = $this->LucklyService->getTodayLeftOver(['cut_price_id'=>$info->id,'openid'=>session('wx_openid')]);
+            //获取使用次数
+            $getUseNum = $this->LucklyService->getUseNum(['cut_price_id'=>$info->id,'openid'=>session('wx_openid')]);
+            $todayLeftOver = count($getTodayLeftOver);
+            $useNum = count($getUseNum);
+            //获取我的奖品
+            $whereOwn[] = ['is_luckly','!=','0'];
+            $whereOwn['cut_price_id'] = $info->id;
+            $whereOwn['openid'] = session('wx_openid');
+            $getOwnPrice = $this->LucklyService->getOwnPrice($whereOwn);
+            return view('admin.activity.'.$preview->tem_name.'_preview')->with(compact('info','collect_id','joinNum','todayLeftOver','getOwnPrice','useNum'));
         }
     }
 }

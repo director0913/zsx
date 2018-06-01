@@ -8,7 +8,7 @@
     <script src="{{asset('vendors/jquery/jquery.min.js')}}"></script>
     <script src="{{asset('vendors/jquery/wheel.js')}}"></script>
     <script  src="{{asset('vendors/jquery/rem.js')}}"></script>
-    <title>抽奖</title>
+    <title>{{$info['title']}}</title>
     <link rel="stylesheet" href="{{asset('vendors/css/wheel.css')}}" />
     <style>
         .lottery {
@@ -20,7 +20,6 @@
         .lottery canvas{
             
         }
-
         .lottery img {
             position: absolute;
             top: 50%;
@@ -54,9 +53,9 @@
         @if($info['info']['join_num_show'])
             <p style="margin-top: 1rem;">已有<span>{{($joinNum+$info['info']['join_num_xuni'])}}</span>人参与</p>
         @endif
-        <p>您今天还有<span>3</span>次抽奖机会</p>
-        @if($info['info']['join_num_count'])
-            <p>已经使用<span>{{$info['info']['join_num_count_num']}}</span>次抽奖机会</p>
+        <p>您今天还有<span id="todayCount">{{($info['info']['join_num_count_num_day']- $todayLeftOver)>0?$info['info']['join_num_count_num_day']- $todayLeftOver:0}}</span>次抽奖机会</p>
+        @if(!$info['info']['join_num_count'])
+            <p>已经使用<span id="useNum">{{$useNum}}</span>次抽奖机会</p>
             <p>总共有<span>{{$info['info']['join_num_count_num']}}</span>次抽奖机会</p>
         @endif
         <!--说明-->
@@ -87,11 +86,15 @@
             </div>
             <div class="tab2">
                 <a href="">
-                    <div class="h_">
-                        <p>一等奖：价值100元礼券</p>
-                        <p>兑奖日期：{{ $info['info']['price_start_at'] }} 至 {{ $info['info']['price_end_at'] }}</p>
-                        <p><span>未核销</span></p>
-                    </div>
+                    @if(count($getOwnPrice))
+                        @foreach($getOwnPrice as $k=>$v)
+                            <div class="h_">
+                                <p>{{$info['info']['price_title'][$v['is_luckly']-1]}}</p>
+                                <p>兑奖日期：{{ $info['info']['price_start_at'] }} 至 {{ $info['info']['price_end_at'] }}</p>
+                                <p><span>{{$v['is_sign']==1?'已核销':'未核销'}}</span></p>
+                            </div>
+                        @endforeach
+                    @endif
                 </a>
                 <section class="a_n" style="margin-top: 1rem;">
                 <a href="javascript:void(0)" >关注我们</a>
@@ -118,7 +121,7 @@
         <!--获奖end-->
         <!--为获奖-->
          <div class="no_huo">
-            <p>啊哦~没有中奖哦</p>
+            <p id="res">啊哦~没有中奖哦</p>
             <img src="{{asset('vendors/images/1.png')}}" alt="" />
             <section class="a_n">
                 <a href="javascript:void(0)" onclick="h_hide()">再来一次</a>
@@ -176,39 +179,25 @@
         var initData = {
             "success": true,
             "list": [
-                //假如只有2项就多个谢谢参与
-                @if(count($info['info']['price_title'])<3)
-                    {
-                        "id": 99,
-                        "name": "谢谢参与",
-                        "image": "{{asset('vendors/images/6.png')}}",
-                        "rank":7,
-                        "percent":2
-                    },
-                @endif
-                @if($info['info']['price_title'])
-                    @for($i=0;$i<count($info['info']['price_title']);$i++)
                         {
-                            "id": {{ $i+1 }},
-                            "name": "{{$info['info']['price_title'][$i]}}",
-                            "image": "{{asset('vendors/images/2.png')}}",
-                            "rank": {{ $i+1 }},
-                            "percent":{{ $i+1 }}
+                            "id": 0,
+                            "name": "谢谢参与",
+                            "image": "{{asset('vendors/images/98.png')}}",
+                            "rank":0,
                         },
-                    @endfor
-                @endif
-                {
-                    "id": 100,
-                    "name": "谢谢参与",
-                    "image": "{{asset('vendors/images/6.png')}}",
-                    "rank":6,
-                    "percent":1
-                },
-                
+                        @if($info['info']['price_title'])
+                            @for($i=0;$i<count($info['info']['price_title']);$i++)
+                                {
+                                    "id": {{ $i+1 }},
+                                    "name": "{{$info['info']['price_title'][$i]}}",
+                                    "image": "{{asset('vendors/images/99.png')}}",
+                                    "rank": {{ $i+1 }},
+                                },
+                            @endfor
+                        @endif
             ]
         }
         var list = {}
-        
         var angel = 360 / initData.list.length
         // 格式化成插件需要的奖品列表格式
         for (var i = 0, l = initData.list.length; i < l; i++) {
@@ -219,7 +208,6 @@
             }
         }
         // 查看奖品列表格式
-        
         // 定义转盘奖品
         wheelSurf = $('#myCanvas').WheelSurf({
             list: list, // 奖品 列表，(必填)
@@ -257,7 +245,6 @@
                 throttle = false;
                 var count = 0
                 // 计算奖品角度
-                
                 for (const key in list) {
                     if (list.hasOwnProperty(key)) {                    
                         if (winData.luckly == list[key].id) {
@@ -269,12 +256,14 @@
                 // 转盘抽奖，(count * angel + angel / 2)
                 //angel 是奖品角度   顺时针从 0 开始  加720 旋转周圈 （一周圈为360）
                 //angel = 旋转角度 + 720
-                var angel = 180
-                wheelSurf.lottery( '900',function () {
-                   if(winData.status){
+                wheelSurf.lottery( 720+360-(count * angel + angel / 2),function () {
+                    if(winData.status){
+                        $('#todayCount').html(parseInt($('#todayCount').html())-1>0?parseInt($('#todayCount').html())-1:0)
+                        $('#useNum').html(parseInt($('#useNum').html())+1)
                         $(".huo").show();
                         $(".text").html(winData.message);
                     }else{
+                        $('#res').html(winData.message)
                         $(".no_huo").show();
                     }
                     throttle = true;
@@ -285,12 +274,8 @@
             })
             .always(function() {
                 console.log("complete");
-            });
-            
-            
-        })
-
-        
+            });  
+        })  
     </script>
 </body>
 

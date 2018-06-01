@@ -26,7 +26,7 @@
            <!--  <p class="p_title"><span>&nbsp;</span>强制关注：&nbsp;&nbsp;<input class="" type="radio" name="r" />&nbsp;开启&nbsp;&nbsp;<input class="" type="radio" name="r" />&nbsp;关闭&nbsp;&nbsp;</p> -->
             <!--派奖方式-->
             <h3 class="b_t">派奖方式</h3>
-            <p class="p_title"><span>&nbsp;</span>总抽奖机会：&nbsp;&nbsp;<input class="" checked="checked" type="radio" name="join_num_count" name="1" />&nbsp;不限&nbsp;&nbsp;<input class="" type="radio" name="join_num_count" name="0" />&nbsp;限制&nbsp;&nbsp;总共<input type="text" class="t_3" name="join_num" />次抽奖机会</p>&nbsp;&nbsp;
+            <p class="p_title"><span>&nbsp;</span>总抽奖机会：&nbsp;&nbsp;<input class="" checked="checked" type="radio" name="join_num_count" value="1" />&nbsp;不限&nbsp;&nbsp;<input class="" type="radio" name="join_num_count" value="0" />&nbsp;限制&nbsp;&nbsp;总共<input type="text" class="t_3" name="join_num_count_num" />次抽奖机会</p>&nbsp;&nbsp;
             <p class="p_title"><span>&nbsp;</span>每日抽奖机会：每人每日有<input type="text" class="t_3" name="join_num_count_num_day" value="3" />次抽奖机会</p>
             <p class="p_title"><span>&nbsp;</span>每人中奖次数：每人最多可中奖<input type="text" class="t_3" name="winner_num" value="1" />次</p>
             <p class="p_title"><span>&nbsp;</span>总中奖率：<input type="text" class="t_3" name="winner_percent" value="10" />%</p>
