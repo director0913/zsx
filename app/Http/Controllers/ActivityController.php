@@ -47,9 +47,9 @@ class ActivityController extends Controller
     public function create(request $request,$id,$id1)
     {
         //判断微信是否登录
-        if (!session('wx_login')) {
-            return redirect(url('/oauth'));
-        }
+        // if (!session('wx_login')) {
+        //     return redirect(url('/oauth'));
+        // }
         $formData = $request->all();
         $cut_price_lists = $this->cut_price->findCut_priceOne(['id'=>$id]);
         return view('admin.activity.'.$cut_price_lists->tem_name)->with(compact('cut_price_lists'))->with(compact('id'))->with(compact('id1'));
@@ -189,43 +189,20 @@ class ActivityController extends Controller
         $collect['now_price'] = $cut_price_collect_info->now_price-$cut;
         $this->cut_price->updateCut_price_collect($collect,['id'=>$parm['collect_id']]);
         //设置cookie防止再次砍价
-        return  response()->json(['status' => true, 'message' => '成功砍价'.$cut.'元！']);
-        
+        return  response()->json(['status' => true, 'message' => '成功砍价'.$cut.'元！']);   
     }
-
     /**
-     * 修改用户视图
-     * @author 王浩
-     * @date   2018-04-29
-     * @param  [type]                   $id [description]
-     * @return [type]                       [description]
-     */
-    public function edit(Request $request,$id)
-    {
-        if($request->isMethod('post')){
-            $this->cut_price->editTemplates($request);
-        }
-        $info = $this->cut_price->findPreviewById($id);
-        $typeInfo = $this->templates_question_type->findTypeAll();
-        $info['content_text'] = json_decode($info['content_text'],true);
-        $templates_typeLists = $this->templates_typeService->findTypeAll();
-       // var_dump($info['content_text']);die;
-        return view('admin.templates.edit')->with(compact('typeInfo'))->with(compact('info'))->with(compact('templates_typeLists'));
-        
-    }
-
-    /**
-     * 修改用户
+     * 修改模版
      * @author 王浩
      * @date   2018-04-29
      * @param  FormRequest              $request [description]
      * @param  [type]                   $id      [description]
      * @return [type]                            [description]
      */
-    public function update(FormRequest $request, $id)
+    public function update(request $request)
     {
-        $this->user->updateUser($request->all(),$id);
-        return redirect('admin/user');
+        $this->cut_price->updateTem($request->all());
+        return redirect(url()->previous());
     }
 
     /**
@@ -254,7 +231,7 @@ class ActivityController extends Controller
         return response()->json($responseData);
     }
         /**
-     * 查看用户信息
+     * 展示模版
      * @author 王浩
      * @date   2018-04-29
      * @param  [type]                   $id [description]
@@ -280,8 +257,6 @@ class ActivityController extends Controller
         }else{
             //获取总共多少人参与了
             $joinNum = $this->LucklyService->getJoin_num(['cut_price_id'=>$info->id]);
-            //$getTodayLeftOver = $this->LucklyService->getTodayLeftOver(['cut_price_id'=>$info->id,'openid'=>session('openid')]);
-            //微信不登录用这个
             //今日还剩几次getUseNum
             $getTodayLeftOver = $this->LucklyService->getTodayLeftOver(['cut_price_id'=>$info->id,'openid'=>session('wx_openid')]);
             //获取使用次数
@@ -294,6 +269,40 @@ class ActivityController extends Controller
             $whereOwn['openid'] = session('wx_openid');
             $getOwnPrice = $this->LucklyService->getOwnPrice($whereOwn);
             return view('admin.activity.'.$preview->tem_name.'_preview')->with(compact('info','collect_id','joinNum','todayLeftOver','getOwnPrice','useNum'));
+        }
+    }
+        /**
+     * 查看用户信息
+     * @author 王浩
+     * @date   2018-04-29
+     * @param  [type]                   $id [description]
+     * @return [type]                       [description]
+     */
+    public function edit($id)
+    {
+        //判断微信是否登录
+        // if (!session('wx_login')) {
+        //     return redirect(url('/oauth'));
+        // }
+        $info = $this->cut_price->findCut_price_tempOne(['id'=>$id]);
+        $info['info'] =json_decode($info['info'],true);
+        //查询需要预览的模版
+        $preview = $this->cut_price->findCut_priceOne(['id'=>$info->cut_price_id]);
+        //不同的模版返回不同的数据
+        if ($preview->tem_name == 'cut_price') {
+            //获取排行榜
+            $rank = $this->cut_price->getCut_price_collectRank(['temp_id'=>$id]);
+            return view('admin.activity.'.$preview->tem_name.'_edit')->with(compact('info'))->with(compact('collect_id'));
+        }else{
+            //获取总共多少人参与了
+            $joinNum = $this->LucklyService->getJoin_num(['cut_price_id'=>$info->id]);
+            //今日还剩几次getUseNum
+            $getTodayLeftOver = $this->LucklyService->getTodayLeftOver(['cut_price_id'=>$info->id,'openid'=>session('wx_openid')]);
+            //获取使用次数
+            $getUseNum = $this->LucklyService->getUseNum(['cut_price_id'=>$info->id,'openid'=>session('wx_openid')]);
+            $todayLeftOver = count($getTodayLeftOver);
+            $useNum = count($getUseNum);
+            return view('admin.activity.'.$preview->tem_name.'_edit')->with(compact('info','collect_id','joinNum','todayLeftOver','getOwnPrice','useNum'));
         }
     }
 }

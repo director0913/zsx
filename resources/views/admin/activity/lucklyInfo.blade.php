@@ -35,9 +35,9 @@
 			          <tr>
 			            <th>序号</th>
 			            <th>姓名</th>
-			            <th>状态</th>
+			            <th>奖品</th>
 			            <th>中奖时间</th>
-                  <th>核销</th>
+                  <th>是否核销</th>
                   <th>操作</th>
 			          </tr>
 		          </thead>
@@ -46,17 +46,16 @@
                 <tr role="row" class="odd">
                   <td class="sorting_1">{{$v['id']}}</td>
                   <td>{{$v['nickname']}}</td>
-                  
-                  <td>{{$v['is_sign']==1?'已核销':'未核销'}}</td>
+                  <td>{{$res['info']['price_title'][($v['is_luckly'] - 1)]}}</td>
                   <td>{{$v['created_at']}}</td>
+                  <td>{{$v['is_sign']==1?'已核销':'未核销'}}</td>
+                  
                   <td>
                     @if($v['is_sign']==1)
                     <a href="javascript:;" onclick="return false" class="btn btn-xs btn-outline btn-danger tooltips tosign" data-original-title="撤销核销" data-placement="top"><i class="fa ">撤销核销</i><form action="{{url('/admin/activity/lucklyRoolbacksign/'.$v['id'])}}" method="POST" name="delete_item" style="display:none"><input type="hidden" name="_method" value="delete"><input type="hidden" name="_token" value="<?php echo csrf_token(); ?>"></form></a>
                     @else
                     <a href="javascript:;" onclick="return false" class="btn btn-xs btn-outline btn-danger tooltips tosign" data-original-title="核销" data-placement="top"><i class="fa ">核销</i><form action="{{url('/admin/activity/lucklyTosign/'.$v['id'])}}" method="POST" name="delete_item" style="display:none"><input type="hidden" name="_method" value="delete"><input type="hidden" name="_token" value="<?php echo csrf_token(); ?>"></form></a>
                     @endif
-                  </td>
-                  <td>
                     <a href="javascript:;" onclick="return false" class="btn btn-xs btn-outline btn-danger tooltips destroy_item" data-original-title="删除" data-placement="top"><i class="fa fa-trash"></i><form action="{{url('/admin/activity/totalDel/'.$v['id'])}}" method="POST" name="delete_item" style="display:none"><input type="hidden" name="_method" value="delete"><input type="hidden" name="_token" value="<?php echo csrf_token(); ?>"></form></a></td>
                 </tr>
                 @endforeach

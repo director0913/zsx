@@ -57,29 +57,24 @@ class ActivityController extends Controller
      */
     public function total($id)
     {   
-        $parm['id'] = $id;
-        $info = $this->cut_price->getTotalLists($parm);
-        if ($info) {
-            foreach ($info as $k => $v) {
-                $info[$k]['info'] = json_decode($v->info,true);
+        //判断哪个模版使用
+        $res = $this->cut_price->findCut_price_tempOne(['id'=>$id]);
+        if ($res->cut_price_id == 1) {
+             $parm['id'] = $id;
+            $info = $this->cut_price->getTotalLists($parm);
+            if ($info) {
+                foreach ($info as $k => $v) {
+                    $info[$k]['info'] = json_decode($v->info,true);
+                }
             }
+            return view('admin.activity.total')->with(compact('info'));
+        }elseif ($res->cut_price_id == 2) {
+            $parm['cut_price_id'] = $id;
+            $res['info'] = json_decode($res['info'],true);
+            $info = $this->cut_price->getLucklyInfoLists($parm);
+            return view('admin.activity.lucklyInfo')->with(compact('res','info'));
         }
-        return view('admin.activity.total')->with(compact('info'));
     }
-    /**
-     *大转盘统计详情
-     * @author 王浩
-     * @date   2018-04-29
-     * @param  FormRequest              $request [description]
-     * @return [type]                            [description]
-     */
-    public function lucklyInfo($id)
-    {   
-        $parm['cut_price_id'] = $id;
-        $info = $this->cut_price->getLucklyInfoLists($parm);
-        return view('admin.activity.lucklyInfo')->with(compact('info'));
-    }
-
     /**
      * 查看用户信息
      * @author 王浩

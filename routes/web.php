@@ -68,4 +68,7 @@ Route::get('/tokenSignature', 'HomeController@tokenSignature');
 
 //抽奖按钮
 Route::post('/luckly/ajaxLucklyButton','LucklyController@ajaxLucklyButton');
+//Route::resource('/luckly/{id}','LucklyController');
+Route::resource('/activity','ActivityController');
 Route::resource('/luckly/{id}','LucklyController');
+

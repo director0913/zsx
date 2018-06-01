@@ -55,12 +55,7 @@
                   <td>{{$v['title']}}</td>
                   <td>{{$v['info']['start_at']}}--{{$v['info']['end_at']}}</td>
                   <td>{{$v['status']}}</td>
-                  <td>@if($v['cut_price_id']==1)
-                        <a href="{{url('/admin/activity/total/'.$v['id'])}}">统计详情</a>
-                      @elseif($v['cut_price_id']==2)
-                        <a href="{{url('/admin/activity/lucklyInfo/'.$v['id'])}}">统计详情</a>
-                      @endif
-                  </td>
+                  <td><a href="{{url('/admin/activity/total/'.$v['id'])}}">统计详情</a></td>
                   <td>{!! $v['created_at'] !!}</td>
                   <td>{!! $v['action'] !!}</td>
                   <td>{!! QrCode::size(100)->generate(url('/activity/show/'.$v['id'])) !!} </td>

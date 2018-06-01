@@ -237,7 +237,6 @@ class Cut_priceService extends BaseService
 		if ($role) {
 			return $role;
 		}
-		abort(404);
 	}
 	/**
 	 * 根据ID获取模版预览数据
@@ -282,7 +281,6 @@ class Cut_priceService extends BaseService
 		if ($role) {
 			return $role;
 		}
-		abort(404);
 	}
 	/**
 	 * 浏览量加一
@@ -440,46 +438,67 @@ class Cut_priceService extends BaseService
 
         $res = $this->cut_price_collect->findAll(['temp_id'=>$id]);
         $temp = $this->cut_price_temp->findOne(['id'=>$id]);
-        $callData[] = ['序号','手机号码','姓名','当前价格','状态','完成时间','核销','报名时间'];
-       // var_dump($res->toArray());die;
-        if ($res) {
-        	foreach ($res as $k => $v) {
-        		$parm = [];
-        		$res[$k]['info'] = json_decode($v->info,true);
-        		$parm[] = $v['id'];
-        		$parm[] = $v['phone'];
-        		
-        		//var_dump($parm);die;
-        		if ($res[$k]['info']) {
-        			foreach ($res[$k]['info'] as $k1 => $v1) {
-        				if ($k1=='name') {
-        					$parm[] = $v1;
-        				}
-        				
-        			}
-        		}
-        		$parm[] = $v['now_price'];
-        		$parm[] = $v['is_success']==1?'已完成':'未完成';
-        		$parm[] = $v['is_success']==1?$v['finish_at']:'未完成';
-        		$parm[] = $v['is_sign']==1?'已核销':'未核销';
-        		$parm[] = $v->created_at;
-        		//var_dump($parm);die;
-        		$callData[] = $parm;
-        	}
+        $temp['info'] = json_decode($temp['info'],true);
+        //根据不同模版生产不同excel
+        if ($temp->cut_price_id == 2) {
+        	$callData[] = ['序号','姓名','奖品','中奖时间','是否核销'];
+        	$parm[] =  ['is_luckly','!=','0'];
+        	$parm['cut_price_id'] = $id;
+			$res = $this->luckly_log->findAll($parm);
+			if ($res) {
+	        	foreach ($res as $k => $v) {
+	        		$parm = [];
+	        		$parm[] = $v->id;
+	        		$parm[] = $v->nickname;
+	        		$parm[] = $temp['info']['price_title'][($v->is_luckly - 1)];
+	        		$parm[] = $v->created_at;
+	        		$parm[] = $v->is_sign == 1?'已核销':'未核销';
+	        		$callData[] = $parm;
+	        	}
+	        }
+	        $title = $temp->title.'中奖表';
+        }elseif ($temp->cut_price_id == 1) {
+        	$callData[] = ['序号','手机号码','姓名','当前价格','状态','完成时间','核销','报名时间'];
+	        if ($res) {
+	        	foreach ($res as $k => $v) {
+	        		$parm = [];
+	        		$res[$k]['info'] = json_decode($v->info,true);
+	        		$parm[] = $v['id'];
+	        		$parm[] = $v['phone'];
+	        		
+	        		//var_dump($parm);die;
+	        		if ($res[$k]['info']) {
+	        			foreach ($res[$k]['info'] as $k1 => $v1) {
+	        				if ($k1=='name') {
+	        					$parm[] = $v1;
+	        				}
+	        				
+	        			}
+	        		}
+	        		$parm[] = $v['now_price'];
+	        		$parm[] = $v['is_success']==1?'已完成':'未完成';
+	        		$parm[] = $v['is_success']==1?$v['finish_at']:'未完成';
+	        		$parm[] = $v['is_sign']==1?'已核销':'未核销';
+	        		$parm[] = $v->created_at;
+	        		//var_dump($parm);die;
+	        		$callData[] = $parm;
+	        	}
+	        }
+	        $title = $temp->title.'活动报名表';
         }
         ob_end_clean();
-        Excel::create($temp->title.'活动报名表',function($excel) use ($callData){
-            $excel->sheet('score', function($sheet) use ($callData){
-                $sheet->rows($callData);
-            });
-        })->export('xls');
+	        Excel::create($temp->title.'活动报名表',function($excel) use ($callData){
+	            $excel->sheet('score', function($sheet) use ($callData){
+	                $sheet->rows($callData);
+	            });
+	        })->export('xls');
 	}
 	//获取中奖用户
 	public function getLucklyInfoLists($parm){
 		$parm[] =  ['is_luckly','!=','0'];
 		return $this->luckly_log->findAll($parm);
 	}
-			/**
+	/**
 	 * 抽奖核销
 	 * @author 王浩
 	 * @date  2018-04-29
@@ -506,5 +525,100 @@ class Cut_priceService extends BaseService
 		$result = $this->luckly_log->edit(['is_sign'=>2],$where);
 		flash_info($result,trans('撤销核销成功！'),trans('撤销核销失败！'));
 		return $result;
+	}
+	//修改模版
+	public function updateTem($formData){
+		$where['id'] = $formData['cut_price_id'];
+		$tem = $this->cut_price_temp->findOne($where);
+		if ($tem->cut_price_id == 1) {
+			$parm['title'] = $formData['title']?$formData['title']:'';
+			//间隔时间
+			$form['interval'] = isset($formData['interval']) && intval($formData['interval'])?intval($formData['interval']):'';
+			$parm['cut_price_id'] = isset($formData['cut_price_id']) && intval($formData['cut_price_id'])?intval($formData['cut_price_id']):'';
+			$form['old_price'] = isset($formData['old_price']) && intval($formData['old_price'])?intval($formData['old_price']):'';
+			$form['bottom_price'] = isset($formData['bottom_price']) && intval($formData['bottom_price'])?intval($formData['bottom_price']):'';
+			$form['min_price'] = isset($formData['min_price']) && intval($formData['min_price'])?intval($formData['min_price']):'';
+			$form['max_price'] = isset($formData['max_price']) && intval($formData['max_price'])?intval($formData['max_price']):'';
+			$form['cut_price_id'] = isset($formData['cut_price_id']) && intval($formData['cut_price_id'])?intval($formData['cut_price_id']):'';
+			$form['jiangpin_num'] = isset($formData['jiangpin_num']) && intval($formData['jiangpin_num'])?intval($formData['jiangpin_num']):'';
+			$form['start_at'] = $formData['start_at'];
+			$form['end_at'] = $formData['end_at'];
+			$form['jiangpin_info'] = $formData['jiangpin_info'];
+			$form['rule_info'] = $formData['rule_info'];
+			$form['lingjiang_info'] = $formData['lingjiang_info'];
+			$form['jigou_info'] = $formData['jigou_info'];
+			$form['store_name'] = $formData['store_name'];
+			$form['store_addr'] = $formData['store_addr'];
+			$form['store_phone'] = $formData['store_phone'];
+			$form['name'] = $formData['name'];
+			$form['phone'] = $formData['phone'];
+			$form['xinxi1'] = $formData['xinxi1'];
+			$form['xinxi2'] = $formData['xinxi2'];
+			$form['xinxi3'] = $formData['xinxi3'];
+			if (isset($formData['jiangpin_photo']) && $formData['jiangpin_photo']) {
+				$files = [];
+				foreach ($formData['jiangpin_photo'] as $k => $v) {
+				  	// 判断图片上传中是否出错
+					   // if (!$value->isValid()) {
+					   //    exit("上传图片出错，请重试！");
+					   // }
+				    if(!empty($v)){//此处防止没有多文件上传的情况
+						// $allowed_extensions = ["png", "jpg", "gif"];
+						// if ($value->getClientOriginalExtension() && !in_array($value->getClientOriginalExtension(), $allowed_extensions)) {
+						//     exit('您只能上传PNG、JPG或GIF格式的图片！');
+						// }
+						$path = $v->store(date('Ymd'));
+		            	$files[] = '/uploads/'.$path;
+				    }
+				}
+				$form['jiangpin_photo'] = $files;
+			}
+			//可选必选
+			for ($i=1; $i < 6; $i++) { 
+				if (isset($formData['choose'.$i]) && $formData['choose'.$i]==1) {
+					$form['choose'.$i] = 1;
+				}
+			}
+			$parm['info'] = json_encode($form);
+		}elseif ($tem->cut_price_id == 2){
+			$parm['title'] = $formData['title']?$formData['title']:'';
+			$form['start_at'] = $formData['start_at'];
+			$form['end_at'] = $formData['end_at'];
+			//参与人数是否限制，不限制的话为0，限制的话为具体数目
+			$form['join_num_limit'] = intval($formData['join_num_limit'])?intval($formData['join_num_limit']):0;
+			$form['join_num'] = intval($formData['join_num'])?intval($formData['join_num']):0;
+			//参与人数是否显示，显示1，不显示0
+			$form['join_num_show'] = $formData['join_num_show']==1?1:0;
+			//虚拟人数
+			$form['join_num_xuni'] = intval($formData['join_num_xuni'])?intval($formData['join_num_xuni']):0;
+			//活动说明
+			$form['desc'] = isset($formData['desc']) && $formData['desc']?$formData['desc']:'';
+			//派奖方式
+			//总的抽奖机会,限制的话是1，不限制为0
+			$form['join_num_count'] = intval($formData['join_num_count'])?intval($formData['join_num_count']):0;
+			//总共的抽奖机会
+			$form['join_num_count_num'] = isset($formData['join_num_count_num']) && intval($formData['join_num_count_num'])?intval($formData['join_num_count_num']):0;
+			//每日的抽奖机会
+			$form['join_num_count_num_day'] = intval($formData['join_num_count_num_day'])?intval($formData['join_num_count_num_day']):0;
+			//每人中奖次数
+			$form['winner_num'] = intval($formData['winner_num'])?intval($formData['winner_num']):1;
+			//总的中奖率
+			$form['winner_percent'] = intval($formData['winner_percent'])?intval($formData['winner_percent']):1;
+			//奖项设置
+			//各个奖项设置
+			//奖项名称
+			$form['price_title'] = $formData['price_title'];
+			//奖品数量
+			$form['price_num'] = $formData['price_num'];
+			//奖品有效期
+			$form['price_start_at'] = $formData['price_start_at'];
+			$form['price_end_at'] = $formData['price_end_at'];
+			//客服电话
+			$form['price_phone'] = $formData['price_phone'];
+			//兑奖须知
+			$form['price_notice'] = $formData['price_notice'];
+			$parm['info'] = json_encode($form);
+		}
+		return $this->cut_price_temp->edit($parm,$where);
 	}
 }
