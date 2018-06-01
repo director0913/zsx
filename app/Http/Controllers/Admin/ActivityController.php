@@ -66,6 +66,19 @@ class ActivityController extends Controller
         }
         return view('admin.activity.total')->with(compact('info'));
     }
+    /**
+     *大转盘统计详情
+     * @author 王浩
+     * @date   2018-04-29
+     * @param  FormRequest              $request [description]
+     * @return [type]                            [description]
+     */
+    public function lucklyInfo($id)
+    {   
+        $parm['cut_price_id'] = $id;
+        $info = $this->cut_price->getLucklyInfoLists($parm);
+        return view('admin.activity.lucklyInfo')->with(compact('info'));
+    }
 
     /**
      * 查看用户信息
@@ -127,6 +140,30 @@ class ActivityController extends Controller
     public function roolbacksign($id)
     {
         $this->cut_price->roolbacksignCut_price_collect($id);
+        return redirect(url()->previous());
+    }
+    /**
+     * 抽奖核销
+     * @author 王浩
+     * @date   2018-04-29
+     * @param  [type]                   $id [description]
+     * @return [type]                       [description]
+     */
+    public function lucklyTosign($id)
+    {
+        $this->cut_price->tosignLuckly($id);
+        return redirect(url()->previous());
+    }
+    /**
+     * 抽奖撤销核销
+     * @author 王浩
+     * @date   2018-04-29
+     * @param  [type]                   $id [description]
+     * @return [type]                       [description]
+     */
+    public function lucklyRoolbacksign($id)
+    {
+        $this->cut_price->roolbackLuckly($id);
         return redirect(url()->previous());
     }
     /**

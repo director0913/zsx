@@ -51,7 +51,7 @@
         </canvas>
         <img src="{{asset('vendors/images/2.png')}}" id="start" class='inner'>
         @if($info['info']['join_num_show'])
-            <p style="margin-top: 1rem;">已有<span>{{($joinNum+$info['info']['join_num_xuni'])}}</span>人参与</p>
+            <p style="margin-top: 1rem;">已有<span id="join_num">{{($joinNum+$info['info']['join_num_xuni'])}}</span>人参与</p>
         @endif
         <p>您今天还有<span id="todayCount">{{($info['info']['join_num_count_num_day']- $todayLeftOver)>0?$info['info']['join_num_count_num_day']- $todayLeftOver:0}}</span>次抽奖机会</p>
         @if(!$info['info']['join_num_count'])
@@ -257,14 +257,13 @@
                 //angel 是奖品角度   顺时针从 0 开始  加720 旋转周圈 （一周圈为360）
                 //angel = 旋转角度 + 720
                 wheelSurf.lottery( 720+360-(count * angel + angel / 2),function () {
+                    $('#join_num').html(Number($('#join_num').html())-1>0?Number($('#join_num').html())-1:0)
+                    $('#todayCount').html(Number($('#todayCount').html())-1>0?Number($('#todayCount').html())-1:0)
+                    $('#useNum').html(Number($('#useNum').html())+1)
                     if(winData.status){
-                        $('#todayCount').html(Number($('#todayCount').html())-1>0?Number($('#todayCount').html())-1:0)
-                        $('#useNum').html(Number($('#useNum').html())+1)
                         $(".huo").show();
                         $(".text").html(winData.message);
                     }else{
-                        $('#todayCount').html(Number($('#todayCount').html())-1>0?Number($('#todayCount').html())-1:0)
-                        $('#useNum').html(Number($('#useNum').html())+1)
                         $('#res').html(winData.message)
                         $(".no_huo").show();
                     }

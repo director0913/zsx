@@ -263,9 +263,9 @@ class ActivityController extends Controller
     public function show($id,$collect_id='')
     {
         //判断微信是否登录
-        if (!session('wx_login')) {
-            return redirect(url('/oauth'));
-        }
+        // if (!session('wx_login')) {
+        //     return redirect(url('/oauth'));
+        // }
         $info = $this->cut_price->findCut_price_tempOne(['id'=>$id]);
         $info['info'] =json_decode($info['info'],true);
         //查询需要预览的模版

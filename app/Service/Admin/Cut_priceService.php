@@ -3,6 +3,7 @@ namespace App\Service\Admin;
 use App\Repositories\Eloquent\Cut_priceRepositoryEloquent;
 use App\Repositories\Eloquent\Cut_price_tempRepositoryEloquent;
 use App\Repositories\Eloquent\Cut_price_logRepositoryEloquent;
+use App\Repositories\Eloquent\Luckly_logRepositoryEloquent;
 use App\Repositories\Eloquent\Cut_price_collectRepositoryEloquent;
 use App\Service\Admin\BaseService;
 use App\Models\Cut_price;
@@ -19,12 +20,13 @@ class Cut_priceService extends BaseService
 {
 	use ActionButtonAttributeTrait;
 	private $action = 'activity';
-	function __construct(Cut_priceRepositoryEloquent $cut_price,Cut_price_tempRepositoryEloquent $cut_price_temp,Cut_price_logRepositoryEloquent $cut_price_log,Cut_price_collectRepositoryEloquent $cut_price_collect)
+	function __construct(Cut_priceRepositoryEloquent $cut_price,Cut_price_tempRepositoryEloquent $cut_price_temp,Cut_price_logRepositoryEloquent $cut_price_log,Cut_price_collectRepositoryEloquent $cut_price_collect,Luckly_logRepositoryEloquent $luckly_log)
 	{
 		$this->cut_price =  $cut_price;
 		$this->cut_price_temp =  $cut_price_temp;
 		$this->cut_price_collect =  $cut_price_collect;
 		$this->cut_price_log =  $cut_price_log;
+		$this->luckly_log =  $luckly_log;
 	}
 	/**
 	 * datatables获取数据
@@ -186,7 +188,7 @@ class Cut_priceService extends BaseService
 				$form['choose'.$i] = 1;
 			}
 		}
-		$parm['created_at'] = date('Y-m-d H:i:s',time());
+		$parm['created_at'] = date('Y-m-d H:i:s');
 		$parm['info'] = json_encode($form);
 		$parm['user_id'] = isset($formData['now_id']) && intval($formData['now_id'])?intval($formData['now_id']):'';
 		$parm['openid'] = session('wx_openid')?session('wx_openid'):'';
@@ -471,5 +473,38 @@ class Cut_priceService extends BaseService
                 $sheet->rows($callData);
             });
         })->export('xls');
+	}
+	//获取中奖用户
+	public function getLucklyInfoLists($parm){
+		$parm[] =  ['is_luckly','!=','0'];
+		return $this->luckly_log->findAll($parm);
+	}
+			/**
+	 * 抽奖核销
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @param  [type]                   $id [用户ID]
+	 * @return [type]                       [Boolean]
+	 */
+	public function tosignLuckly($id)
+	{
+		$where['id'] = $id;
+		$result = $this->luckly_log->edit(['is_sign'=>1],$where);
+		flash_info($result,trans('核销成功！'),trans('核销失败！'));
+		return $result;
+	}
+				/**
+	 *抽奖撤销核销
+	 * @author 王浩
+	 * @date  2018-04-29
+	 * @param  [type]                   $id [用户ID]
+	 * @return [type]                       [Boolean]
+	 */
+	public function roolbackLuckly($id)
+	{
+		$where['id'] = $id;
+		$result = $this->luckly_log->edit(['is_sign'=>2],$where);
+		flash_info($result,trans('撤销核销成功！'),trans('撤销核销失败！'));
+		return $result;
 	}
 }

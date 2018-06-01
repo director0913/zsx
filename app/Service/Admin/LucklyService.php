@@ -277,8 +277,10 @@ class LucklyService extends BaseService
              
         $price = getLuckly($cut_price_temp['info']['winner_percent'],$cut_price_temp['info']['price_num'],$cut_price_temp['info']['price_num']);
         $log['openid'] = session('wx_openid')?session('wx_openid'):'';
+        $log['nickname'] = session('wx_nickname')?session('wx_nickname'):'';
         $log['is_luckly'] = $price;
         $log['cut_price_id'] = $parm['temp_id'];
+        $log['created_at'] = date('Y-m-d H:i:s');
         $res = $this->luckly_log->store($log); 
         if ($price) {
         	return ['status'=>true,'message'=>'恭喜，抽中'.$price.'等奖！','luckly'=>$price];

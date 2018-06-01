@@ -11,6 +11,9 @@ $router->group(['prefix' => 'activity'],function ($router)
 	$router->any('tosign/{id}','ActivityController@tosign')->name('activity.tosign');
 	$router->any('roolbacksign/{id}','ActivityController@roolbacksign')->name('activity.roolbacksign');
 	$router->any('totalDel/{id}','ActivityController@totalDel')->name('activity.totalDel');
+	$router->any('lucklyInfo/{id}','ActivityController@lucklyInfo')->name('activity.lucklyInfo');
+	$router->any('lucklyTosign/{id}','ActivityController@lucklyTosign')->name('activity.lucklyTosign');
+	$router->any('lucklyRoolbacksign/{id}','ActivityController@lucklyRoolbacksign')->name('activity.lucklyRoolbacksign');
 	$router->any('{id}/downexcel','ActivityController@downexcel')->name('activity.downexcel');
 });
 $router->resource('activity','ActivityController');
