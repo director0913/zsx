@@ -72,3 +72,6 @@ Route::post('/luckly/ajaxLucklyButton','LucklyController@ajaxLucklyButton');
 Route::resource('/activity','ActivityController');
 Route::resource('/luckly/{id}','LucklyController');
 
+//登录按钮
+Route::post('/toLogin','HomeController@toLogin');
+

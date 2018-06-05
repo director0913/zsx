@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 use Session;
 use Illuminate\Http\Request;
-
+use Validator;
 class HomeController extends Controller
 {
     /**
@@ -15,7 +15,6 @@ class HomeController extends Controller
     {
       //  $this->middleware('Wechat');
     }
-
     /**
      * Show the application dashboard.
      *
@@ -31,7 +30,6 @@ class HomeController extends Controller
         session(['oauth_url'=>url()->previous()]);
         return \Socialite::with('weixin')->redirect();
     }
-
     # 微信的回调地址
     public function callback(Request $request)
     {
@@ -42,11 +40,6 @@ class HomeController extends Controller
             session(['wx_nickname'=>$oauthUser->user['nickname']]);
             return redirect(session('oauth_url'));
         }
-        // $openid = $oauthUser->user->openid;
-        // // 在这里可以获取到用户在微信的资料
-        // dd($oauthUser);
-
-        // 接下来处理相关的业务逻
     }
     public function tokenSignature(request $request)
     {
@@ -68,5 +61,25 @@ class HomeController extends Controller
            echo $_GET['echostr'];
            exit;
         }
+    }
+    //首页登录
+    public function toLogin(request $request){
+         $rule = [  
+            'username' => 'required',  
+            'password' => 'required',  
+        ];  
+        $message = [  
+            'username.required' => '请输入用户名！',
+            'password.required' => '请输入密码！'  
+        ];  
+        $validate = Validator::make($request->all(), $rule, $message);  
+        if (!$validate->passes()) {  
+            return back()->withErrors($validate);  
+        }  
+        $allData = $request->all();
+        $phone = $allData['username'];
+        $pwd = md5($allData['password']);
+        $parm = '{"phone":"".$phone."","pwd":"".$pwd."","loginType":"1","deviceType":"ios"}';
+        $res = getUrl(env('FEICUI_API_LOGIN_TOKENS'),'',true);
     }
 }

@@ -179,6 +179,7 @@
         var initData = {
             "success": true,
             "list": [
+                        
                         {
                             "id": 0,
                             "name": "谢谢参与",
@@ -194,6 +195,37 @@
                                     "rank": {{ $i+1 }},
                                 },
                             @endfor
+                        @endif
+                        //保证至少6个选项
+                        @if(count($info['info']['price_title'])<=4)
+                            {
+                                "id": 0,
+                                "name": "谢谢参与",
+                                "image": "{{asset('vendors/images/98.png')}}",
+                                "rank":{{count($info['info']['price_title'])+1}},
+                            },
+                            @if(count($info['info']['price_title'])==3)
+                                <?php $len=1;?>
+                                @for($i=0;$i<$len;$i++)
+                                    {
+                                        "id": {{ $i+1 }},
+                                        "name": "{{$info['info']['price_title'][$i]}}",
+                                        "image": "{{asset('vendors/images/99.png')}}",
+                                        "rank": {{$len+5+$i}},
+                                    },
+                                @endfor
+                            @endif
+                            @if(count($info['info']['price_title'])==2)
+                                <?php $len=2;?>
+                                @for($i=0;$i<$len;$i++)
+                                    {
+                                        "id": {{ $i+1 }},
+                                        "name": "{{$info['info']['price_title'][$i]}}",
+                                        "image": "{{asset('vendors/images/99.png')}}",
+                                        "rank": {{$len+4+$i}},
+                                    },
+                                @endfor
+                            @endif
                         @endif
             ]
         }
@@ -230,6 +262,11 @@
         // 抽奖
         var throttle = true;
         $("#start").on('click', function () {
+            var todayCount = $('#todayCount').html()
+            if (Number(todayCount)==0) {
+                alert('您的抽奖次数已经用完！')
+                return false
+            };
             $.ajax({
                 url: '{{ url("/luckly/ajaxLucklyButton") }}',
                 type: 'post',
