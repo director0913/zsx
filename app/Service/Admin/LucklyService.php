@@ -257,24 +257,21 @@ class LucklyService extends BaseService
         }
         //参与人数是否限制
         $getJoin_num = $this->getJoin_num(['cut_price_id'=>$parm['temp_id']]);
-
-        if (count($getJoin_num) >$cut_price_temp['info']['join_num']) {
-        	//判断总共抽奖次数
-        	$countNum = $this->luckly_log->countNum(['cut_price_id'=>$parm['temp_id'],'openid'=>session('wx_openid')]);
-        	if (!$cut_price_temp['info']['join_num_count']) {
-        		if ($cut_price_temp['info']['join_num_count_num'] <= $countNum) {
-	        		return ['status'=>false,'message'=>'所有的抽奖次数已经用完！'];
-	        	}
+        if (count($getJoin_num) >= $cut_price_temp['info']['join_num']) {
+        	return ['status'=>false,'message'=>'参与人数已经足够！'];	
+        }   
+         //判断总共抽奖次数
+    	$countNum = $this->luckly_log->countNum(['cut_price_id'=>$parm['temp_id'],'openid'=>session('wx_openid')]);
+    	if (!$cut_price_temp['info']['join_num_count']) {
+    		if ($cut_price_temp['info']['join_num_count_num'] <= $countNum) {
+        		return ['status'=>false,'message'=>'所有的抽奖次数已经用完！'];
         	}
-    		$countNum = $this->getTodayLeftOver(['cut_price_id'=>$parm['temp_id'],'openid'=>session('wx_openid')]);
-    		//今日抽奖次数
-    		if (count($countNum) >= $cut_price_temp['info']['join_num_count_num_day']) {
-    			return ['status'=>false,'message'=>'今日的抽奖次数已经用完！'];
-        	}
-        }else{
-        	return ['status'=>false,'message'=>'参与人数已经足够！'];
-        }     
-             
+    	}
+		$countNum = $this->getTodayLeftOver(['cut_price_id'=>$parm['temp_id'],'openid'=>session('wx_openid')]);
+		//今日抽奖次数
+		if (count($countNum) >= $cut_price_temp['info']['join_num_count_num_day']) {
+			return ['status'=>false,'message'=>'今日的抽奖次数已经用完！'];
+    	}    
         $price = getLuckly($cut_price_temp['info']['winner_percent'],$cut_price_temp['info']['price_num'],$cut_price_temp['info']['price_num']);
         $log['openid'] = session('wx_openid')?session('wx_openid'):'';
         $log['nickname'] = session('wx_nickname')?session('wx_nickname'):'';
