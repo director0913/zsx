@@ -70,8 +70,8 @@ Route::get('/tokenSignature', 'HomeController@tokenSignature');
 Route::post('/luckly/ajaxLucklyButton','LucklyController@ajaxLucklyButton');
 //Route::resource('/luckly/{id}','LucklyController');
 Route::resource('/activity','ActivityController');
-Route::resource('/luckly/{id}','LucklyController');
+//Route::resource('/luckly/{id}','LucklyController');
 
 //登录按钮
-Route::post('/toLogin','HomeController@toLogin');
+Route::any('toLogin','HomeController@toLogin')->name('toLogin');
 

@@ -13,7 +13,7 @@ use Illuminate\Contracts\Auth\SupportsBasicAuth;
 use Illuminate\Contracts\Cookie\QueueingFactory as CookieJar;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
-
+use DB;
 class SessionGuard implements StatefulGuard, SupportsBasicAuth
 {
     use GuardHelpers;
@@ -348,6 +348,23 @@ class SessionGuard implements StatefulGuard, SupportsBasicAuth
      */
     public function attempt(array $credentials = [], $remember = false, $login = true)
     {
+        //接口验证
+        $allData = $credentials;
+        $phone = $allData['username'];
+        $pwd = md5($allData['password']);
+        $parm = '{"phone":"'.$phone.'","pwd":"'.$pwd.'","loginType":"1","deviceType":"ios"}';
+        $res = getUrl(env('FEICUI_API_LOGIN_TOKENS'),$parm,true);
+        $json = json_decode($res,true);
+        if ($json['code']==0) {            
+            $exist = DB::table('users')->where('username','=',$phone)->first();
+            if ($exist) {
+                $this->updateSession($exist->id);
+            }else{
+                $res = DB::table('users')->insertGetId( ['username'=>$phone,'password'=>bcrypt($allData['password'])] );
+                $res = DB::table('role_user')->insertGetId( ['role_id'=>1,'user_id'=>$res] );
+                $this->updateSession($res);
+            }
+        }
         $this->fireAttemptEvent($credentials, $remember, $login);
 
         $this->lastAttempted = $user = $this->provider->retrieveByCredentials($credentials);
@@ -490,7 +507,7 @@ class SessionGuard implements StatefulGuard, SupportsBasicAuth
      * @param  string  $id
      * @return void
      */
-    protected function updateSession($id)
+    public function updateSession($id)
     {
         $this->session->set($this->getName(), $id);
 
