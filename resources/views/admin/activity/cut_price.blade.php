@@ -35,7 +35,7 @@
 	<input type="hidden" value="{{$id1}}" name="now_id">
 	<div class="warp">
 		<div class="head">
-			<textarea type="text" placeholder="XX机构数招进行中，课程疯狂低价" value="XX机构数招进行中，课程疯狂低价" name="title"></textarea>
+			<textarea type="text" style="border:0;color:#fff;width: 100%;height: 100%;background:rgba(0,0,0,0)" placeholder="XX机构数招进行中，课程疯狂低价" value="XX机构数招进行中，课程疯狂低价" name="title"></textarea>
 		</div>
 		<p class="time">
 			<span>活动时间：</span><input type="date" name="start_at"/>到<input type="date" name="end_at"/>
@@ -158,7 +158,7 @@
 			<!-- <div class="a_t">+点击添加门店</div> -->
 		</div>
 		<!-- 信息收集 -->
-		<div class="l_j">
+		<div class="l_j" style="height: 6.8rem;margin-bottom: 2rem;">
 			<div class="bj">
                 <div class="img_ani yaohuang">
                     <!--<img class="paizi" src="img/icon1-1.png" alt="">-->
@@ -170,8 +170,8 @@
             </div>
 				<div class="info-title">
 					<ul>
-						<li>自定义项为空则不显示,最多可填6个字</li>
-						<li>如果有用户报名，此内容不可在做任何的修改</li>
+						<li style="font-size: 0.28rem">自定义项为空则不显示,最多可填6个字</li>
+						<li style="font-size: 0.28rem">如果有用户报名，此内容不可在做任何的修改</li>
 					</ul>
 				</div>
 			    <div class="info-list">
@@ -225,7 +225,7 @@
 		<div class="footer">
 			<ul>
 				<li>预约活动</li>
-				<li><input type="submit" onclick="return check()" value="保存活动"></li>
+				<li><input type="submit" style='background: #f0b865;color: #fff;border: 0;' onclick="return check()" value="保存活动"></li>
 			</ul>
 		</div>
 	</div>

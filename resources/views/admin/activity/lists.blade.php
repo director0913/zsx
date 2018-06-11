@@ -2,6 +2,31 @@
 @section('css')
 <link href="{{asset('vendors/dataTables/datatables.min.css')}}" rel="stylesheet">
 @endsection
+<style type="text/css">
+  .show_erweiCode{
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: rgba(0,0,0,0.6);
+    z-index: 9999;
+    display: none;
+  }
+  .show_list{
+    width: 500px;
+    height: 500px;
+    margin: 0 auto;
+    background: #fff;
+    margin-top: 100px;
+    display: none;
+  }
+</style>
+<div class="show_erweiCode">
+    @foreach($responseData['data'] as $k => $v)
+    <div class="show_list">{!! QrCode::size(500)->generate(url('/activity/show/'.$v['id'])) !!}</div>
+    @endforeach
+</div>
 @section('content')
 <div class="row wrapper border-bottom white-bg page-heading">
   <div class="col-lg-10">
@@ -58,7 +83,7 @@
                   <td><a href="{{url('/admin/activity/total/'.$v['id'])}}">统计详情</a></td>
                   <td>{!! $v['created_at'] !!}</td>
                   <td>{!! $v['action'] !!}</td>
-                  <td>{!! QrCode::size(100)->generate(url('/activity/show/'.$v['id'])) !!} </td>
+                  <!-- <td>{!! QrCode::size(100)->generate(url('/activity/show/'.$v['id'])) !!} </td> -->
                 </tr>
                 @endforeach
 		          </tbody>
@@ -83,6 +108,7 @@
 </div>
 @endsection
 @section('js')
+
 <script src="{{asset('vendors/dataTables/datatables.min.js')}}"></script>
 <script src="{{asset('vendors/layer/layer.js')}}"></script>
 
@@ -119,6 +145,21 @@
   $('.tooltips').mouseout(function(){
     
   })
+  //预览二维码
+  $(".btn-info").on("click",function(){
+    var _this = $(this),
+        parent_index = _this.parent().parent().index();
+        
+        //z遮罩层显示
+        $(".show_erweiCode").show();
+        //对应的二维码显示
+        $(".show_erweiCode div").eq(parent_index).show();
+  })
+  //关闭二维码
+   $(".show_erweiCode").on("click",function(){
+        $(".show_erweiCode").hide();
+        $(".show_erweiCode div").hide();
+   })
     
 </script>
 @endsection

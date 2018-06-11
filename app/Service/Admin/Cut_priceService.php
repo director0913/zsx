@@ -369,11 +369,11 @@ class Cut_priceService extends BaseService
 	 */
 	public function storeCut_price_collect($form)
 	{
-		$parm['phone'] = $form['phone'];
-		$data['name'] = $form['name'];
-		$data['xinxi1'] = $form['xinxi1'];
-		$data['xinxi2'] = $form['xinxi2'];
-		$data['xinxi3'] = $form['xinxi3'];
+		$data['phone'] = isset($form['phone']) && $form['phone']?$form['phone']:'';
+		$data['name'] = isset($form['name']) && $form['name']?$form['name']:'';
+		$data['xinxi1'] = isset($form['xinxi1']) && $form['xinxi1']?$form['xinxi1']:'';
+		$data['xinxi2'] = isset($form['xinxi2']) && $form['xinxi2']?$form['xinxi2']:'';
+		$data['xinxi3'] = isset($form['xinxi3']) && $form['xinxi3']?$form['xinxi3']:'';
 		$parm['info'] = json_encode($data);
 		$parm['now_price'] = $form['now_price'];
 		$parm['temp_id'] = $form['temp_id'];
